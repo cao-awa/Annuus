@@ -7,9 +7,6 @@ Supported minecraft 1.21.4 with fabric loader, needs fabric-api.
 
 When the player doesn't install annuus on the client, network packet will send normally like vanilla.
 
-Annuus is only useful in terrible network conditions or with many players,
-because annuus lets data size smaller but latency (in data calculates, not networking) is higher a little.
-
 # Performance
 
 > Deflate 1 has less CPU usage, even though that performance is not good enough here \
