@@ -20,7 +20,7 @@ public class Lz4Compressor implements InformationCompressor {
      * @since 1.0.0
      */
     public byte[] compress(byte[] bytes) {
-        return LZ4Factory.fastestInstance()
+        return LZ4Factory.nativeInstance()
                          .fastCompressor()
                          .compress(bytes);
     }
@@ -35,7 +35,7 @@ public class Lz4Compressor implements InformationCompressor {
      * @return decompress result
      */
     public byte[] decompress(byte[] bytes) {
-        return LZ4Factory.fastestInstance()
+        return LZ4Factory.nativeInstance()
                          .fastDecompressor()
                          .decompress(
                                  bytes,

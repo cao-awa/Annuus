@@ -13,12 +13,16 @@ import java.util.Set;
 
 public class Annuus implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("Annuus");
-    public static final String VERSION = "1.0.0";
-    public static final int VERSION_ID = 0;
+    public static final String VERSION = "1.0.1";
+    public static final int PROTOCOL_VERSION_ID = 0;
     public static final AnnuusConfig CONFIG = new AnnuusConfig();
     public static final AnnuusConfig PERSISTENT_CONFIG = new AnnuusConfig();
     public static Set<String> LOADED_MODS = CollectionFactor.hashSet();
     public static String loadingPlatform = "fabric";
+    public static long processedChunks = 0;
+    public static long processedBytes = 0;
+    public static double calculatedTimes = 0D;
+    public static boolean enableDebugs = false;
 
     @Override
     public void onInitialize() {

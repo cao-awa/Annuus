@@ -19,12 +19,24 @@ import java.util.Set;
 public class AnnuusConfig {
     private static final Logger LOGGER = LogManager.getLogger("AnnuusConfig");
     private static final File CONFIG_FILE = new File("config/annuus.json");
-    public static final AnnuusConfigKey<Boolean> ZZZ_COMPRESS_ENABLED = AnnuusConfigKey.create("zzz_compress_enabled", false);
+    public static final AnnuusConfigKey<String> CHUNK_COMPRESS = AnnuusConfigKey.create("chunk_compression", "best_compress", "no_compress", "best_compress", "best_speed");
 
     private final JSONObject config = new JSONObject();
 
-    public boolean isZzzCompressEnabled() {
-        return getConfig(ZZZ_COMPRESS_ENABLED);
+    public boolean isEnableChunkCompress() {
+        return !getConfig(CHUNK_COMPRESS).equals("no_compress");
+    }
+
+    public boolean isBestCompress() {
+        return getConfig(CHUNK_COMPRESS).equals("best_compress");
+    }
+
+    public boolean isBestSpeed() {
+        return getConfig(CHUNK_COMPRESS).equals("best_speed");
+    }
+
+    public String chunkCompress() {
+        return getConfig(CHUNK_COMPRESS);
     }
 
     public <X> void setConfig(AnnuusConfigKey<X> configKey, X value) {
@@ -60,7 +72,7 @@ public class AnnuusConfig {
         try {
             final JSONObject config = JSONObject.parse(IOUtil.read(new FileReader(CONFIG_FILE, StandardCharsets.UTF_8)));
 
-            setConfig(ZZZ_COMPRESS_ENABLED, config);
+            setConfig(CHUNK_COMPRESS, config);
         } catch (Exception e) {
             LOGGER.warn("Config not found, use default values", e);
         }
@@ -83,24 +95,24 @@ public class AnnuusConfig {
     }
 
     public void loadAsDefault() {
-        setConfig(ZZZ_COMPRESS_ENABLED, ZZZ_COMPRESS_ENABLED.defaultValue());
+        setConfig(CHUNK_COMPRESS, CHUNK_COMPRESS.defaultValue());
     }
 
     public void copyFrom(@NotNull AnnuusConfig config) {
-        setConfig(ZZZ_COMPRESS_ENABLED, config.isZzzCompressEnabled());
+        setConfig(CHUNK_COMPRESS, config.chunkCompress());
     }
 
     public void print() {
-        if (isZzzCompressEnabled()) {
-            LOGGER.info("Annuus is enabled zzz compress");
+        if (isEnableChunkCompress()) {
+            LOGGER.info("Annuus is enabled chunk compression");
         }
     }
 
     public Set<AnnuusConfigKey<?>> collectEnabled() {
         Set<AnnuusConfigKey<?>> enabled = CollectionFactor.hashSet();
 
-        if (isZzzCompressEnabled()) {
-            enabled.add(ZZZ_COMPRESS_ENABLED);
+        if (isEnableChunkCompress()) {
+            enabled.add(CHUNK_COMPRESS);
         }
 
         return enabled;

@@ -1,8 +1,8 @@
 package com.github.cao.awa.annuus.mixin.network;
 
+import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.c2s.config.ReadyC2SPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerConfigurationNetworkHandler;
@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerConfigurationNetworkHandler.class)
 public class ServerConfigurationNetworkHandlerMixin implements AnnuusVersionStorage {
@@ -46,8 +44,11 @@ public class ServerConfigurationNetworkHandlerMixin implements AnnuusVersionStor
         ((AnnuusVersionStorage) player).setAnnuusVersion(this.annuusVersion);
 
         if (this.annuusVersion > -1) {
-            LOGGER.info("Player {} joining server with Annuus version {}", player.getName().getString(), this.annuusVersion);
+            LOGGER.info("Player {} joining server with Annuus protocol version {}", player.getName().getString(), this.annuusVersion);
         }
+
+        Annuus.processedChunks = 0;
+        Annuus.calculatedTimes = 0;
 
         // Connect to server.
         instance.onPlayerConnect(connection, player, clientData);

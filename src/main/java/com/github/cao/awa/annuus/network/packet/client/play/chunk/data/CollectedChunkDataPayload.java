@@ -1,5 +1,6 @@
 package com.github.cao.awa.annuus.network.packet.client.play.chunk.data;
 
+import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.sinuatum.util.collection.CollectionFactor;
 import io.netty.buffer.Unpooled;
@@ -9,7 +10,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ChunkData;
 import net.minecraft.network.packet.s2c.play.LightData;
@@ -59,29 +59,33 @@ public record CollectedChunkDataPayload(
         );
     }
 
-    private static CollectedChunkDataPayload decode(RegistryByteBuf x) {
+    private static CollectedChunkDataPayload decode(RegistryByteBuf buf) {
         try {
-            int packetSize = x.readInt();
+            int packetSize = buf.readInt();
 
             byte[] data = new byte[packetSize];
 
-            x.readBytes(data);
+            buf.readBytes(data);
 
-            data = DeflateCompressor.INSTANCE.decompress(data);
+            if (Annuus.CONFIG.isBestCompress()) {
+                data = DeflateCompressor.BEST_INSTANCE.decompress(data);
+            } else {
+                data = DeflateCompressor.FASTEST_INSTANCE.decompress(data);
+            }
 
-            RegistryByteBuf buf = new RegistryByteBuf(new PacketByteBuf(Unpooled.copiedBuffer(data)), x.getRegistryManager());
+            RegistryByteBuf delegate = new RegistryByteBuf(new PacketByteBuf(Unpooled.copiedBuffer(data)), buf.getRegistryManager());
 
-            int size = buf.readInt();
+            int size = delegate.readInt();
 
             IntList xPositions = new IntArrayList();
             IntList zPositions = new IntArrayList();
 
             for (int i = 0; i < size; i++) {
-                xPositions.add(buf.readInt());
+                xPositions.add(delegate.readInt());
             }
 
             for (int i = 0; i < size; i++) {
-                zPositions.add(buf.readInt());
+                zPositions.add(delegate.readInt());
             }
 
             List<ChunkData> chunkDataList = CollectionFactor.arrayList();
@@ -90,7 +94,7 @@ public record CollectedChunkDataPayload(
                 int chunkX = xPositions.getInt(i);
                 int chunkZ = zPositions.getInt(i);
 
-                chunkDataList.add(new ChunkData(buf, chunkX, chunkZ));
+                chunkDataList.add(new ChunkData(delegate, chunkX, chunkZ));
             }
 
             List<LightData> lightDataList = CollectionFactor.arrayList();
@@ -98,7 +102,7 @@ public record CollectedChunkDataPayload(
                 int chunkX = xPositions.getInt(i);
                 int chunkZ = zPositions.getInt(i);
 
-                lightDataList.add(new LightData(buf, chunkX, chunkZ));
+                lightDataList.add(new LightData(delegate, chunkX, chunkZ));
             }
 
             return new CollectedChunkDataPayload(xPositions, zPositions, chunkDataList, lightDataList);
@@ -108,34 +112,39 @@ public record CollectedChunkDataPayload(
         }
     }
 
-    private static void encode(RegistryByteBuf x, CollectedChunkDataPayload packet) {
-        RegistryByteBuf buf = new RegistryByteBuf(new PacketByteBuf(Unpooled.buffer()), x.getRegistryManager());
+    private static void encode(RegistryByteBuf buf, CollectedChunkDataPayload packet) {
+        RegistryByteBuf delegate = new RegistryByteBuf(new PacketByteBuf(Unpooled.buffer()), buf.getRegistryManager());
 
         int size = packet.chunkData.size();
 
-        buf.writeInt(size);
+        delegate.writeInt(size);
 
         for (int position : packet.xPositions) {
-            buf.writeInt(position);
+            delegate.writeInt(position);
         }
         for (int position : packet.zPositions) {
-            buf.writeInt(position);
+            delegate.writeInt(position);
         }
         for (ChunkData chunkData : packet.chunkData) {
-            chunkData.write(buf);
+            chunkData.write(delegate);
         }
         for (LightData lightData : packet.lightData) {
-            lightData.write(buf);
+            lightData.write(delegate);
         }
 
-        byte[] bytes = new byte[buf.readableBytes()];
+        byte[] bytes = new byte[delegate.readableBytes()];
 
-        buf.readBytes(bytes);
+        delegate.readBytes(bytes);
 
-        byte[] data = DeflateCompressor.INSTANCE.compress(bytes);
-        x.writeInt(data.length);
+        byte[] data = DeflateCompressor.FASTEST_INSTANCE.compress(bytes);
+        buf.writeInt(data.length);
 
-        x.writeBytes(data);
+        buf.writeBytes(data);
+
+        if (Annuus.enableDebugs) {
+            Annuus.processedChunks += size;
+            Annuus.processedBytes += buf.readableBytes();
+        }
     }
 
     @Override

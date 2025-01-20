@@ -20,8 +20,8 @@ import java.util.Iterator;
 
 public class CollectedChunkDataPayloadHandler {
     public static void loadChunksFromPayload(CollectedChunkDataPayload payload, MinecraftClient client, ClientPlayerEntity player) {
-        ClientPlayNetworkHandler networkHandler = player.networkHandler;
-        client.executeAsync((future) -> {
+        client.executeSync(() -> {
+            ClientPlayNetworkHandler networkHandler = player.networkHandler;
             ClientWorld world = networkHandler.getWorld();
             Iterator<ChunkData> chunkDataIterator = payload.chunkData().iterator();
             Iterator<LightData> lightDataIterator = payload.lightData().iterator();
@@ -29,9 +29,9 @@ public class CollectedChunkDataPayloadHandler {
 
             while (chunkDataIterator.hasNext()) {
                 ChunkData chunkData = chunkDataIterator.next();
+                LightData lightData = lightDataIterator.next();
                 int x = payload.xPositions().getInt(i);
                 int z = payload.zPositions().getInt(i);
-                LightData lightData = lightDataIterator.next();
 
                 world.getChunkManager().loadChunkFromPacket(x, z, chunkData.getSectionsDataBuf(), chunkData.getHeightmap(), chunkData.getBlockEntities(x, z));
                 world.enqueueChunkUpdate(() -> {

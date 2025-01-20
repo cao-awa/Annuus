@@ -12,7 +12,13 @@ import java.util.zip.InflaterInputStream;
 
 @Stable
 public class DeflateCompressor implements InformationCompressor {
-    public static final DeflateCompressor INSTANCE = new DeflateCompressor();
+    public static final DeflateCompressor BEST_INSTANCE = new DeflateCompressor(true);
+    public static final DeflateCompressor FASTEST_INSTANCE = new DeflateCompressor(false);
+    private final boolean isBestSpeed;
+
+    public DeflateCompressor(boolean isBestSpeed) {
+        this.isBestSpeed = isBestSpeed;
+    }
 
     /**
      * Compress using 'deflate' with the best compression.
@@ -33,7 +39,7 @@ public class DeflateCompressor implements InformationCompressor {
             IOUtil.write(
                     new DeflaterOutputStream(
                             out,
-                            new Deflater(Deflater.BEST_COMPRESSION)
+                            new Deflater(this.isBestSpeed ? Deflater.BEST_SPEED : Deflater.BEST_COMPRESSION)
                     ),
                     bytes
             );

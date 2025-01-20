@@ -4,11 +4,13 @@
   "package": "com.github.cao.awa.annuus.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "chunk.DecoderHandlerMixin",
     "chunk.sender.ChunkDataSenderMixin",
     "network.ServerConfigurationNetworkHandlerMixin",
     "player.ServerPlayerEntityMixin"
   ],
   "client": [
+    "network.ClientConfigurationNetworkHandlerMixin"
   ],
   "server": [
   ],

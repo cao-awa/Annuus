@@ -19,7 +19,7 @@ public record NoticeServerAnnuusPayload(int versionId) implements CustomPayload 
     }
 
     public static NoticeServerAnnuusPayload createData() {
-        return new NoticeServerAnnuusPayload(Annuus.VERSION_ID);
+        return new NoticeServerAnnuusPayload(Annuus.PROTOCOL_VERSION_ID);
     }
 
     private static NoticeServerAnnuusPayload decode(PacketByteBuf buf) {
@@ -27,7 +27,7 @@ public record NoticeServerAnnuusPayload(int versionId) implements CustomPayload 
     }
 
     private static void encode(PacketByteBuf buf, NoticeServerAnnuusPayload packet) {
-        buf.writeInt(Annuus.VERSION_ID);
+        buf.writeInt(Annuus.PROTOCOL_VERSION_ID);
     }
 
     @Override
