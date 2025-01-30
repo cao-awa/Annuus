@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.cao.awa.annuus.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "chunk.DecoderHandlerMixin",
+    "chunk.sender.ChunkDataSenderMixin",
+    "network.ServerCommonNetworkHandlerMixin",
+    "network.ServerConfigurationNetworkHandlerMixin",
+    "player.ServerPlayerEntityMixin",
+    "server.MinecraftServerMixin"
+  ],
+  "client": [
+    "network.ClientConfigurationNetworkHandlerMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
