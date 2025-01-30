@@ -4,7 +4,7 @@
 Annuus is a mod for minecraft networking,
 improves network performance and makes the game more available for running on large server.
 
-Supported minecraft 1.21.4 with fabric loader, needs fabric-api.
+Supported minecraft 1.21.4 with fabric loader and neoforge loader, needs fabric-api when using fabric, needs architectury-api when using neoforge.
 
 When the player doesn't install annuus on the client, network packet will send normally like vanilla.
 
