@@ -1,7 +1,7 @@
 package com.github.cao.awa.annuus.network.packet.client.play.chunk.data;
 
 import com.github.cao.awa.annuus.Annuus;
-import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
+import com.github.cao.awa.annuus.util.compress.AnnuusCompressUtil;
 import com.github.cao.awa.sinuatum.util.collection.CollectionFactor;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -61,19 +61,7 @@ public record CollectedChunkDataPayload(
 
     private static CollectedChunkDataPayload decode(RegistryByteBuf buf) {
         try {
-            int packetSize = buf.readInt();
-
-            byte[] data = new byte[packetSize];
-
-            buf.readBytes(data);
-
-            if (Annuus.CONFIG.isBestCompress()) {
-                data = DeflateCompressor.BEST_INSTANCE.decompress(data);
-            } else {
-                data = DeflateCompressor.FASTEST_INSTANCE.decompress(data);
-            }
-
-            RegistryByteBuf delegate = new RegistryByteBuf(new PacketByteBuf(Unpooled.copiedBuffer(data)), buf.getRegistryManager());
+            RegistryByteBuf delegate = AnnuusCompressUtil.doDecompressRegistryBuf(buf);
 
             int size = delegate.readInt();
 
@@ -132,14 +120,7 @@ public record CollectedChunkDataPayload(
             lightData.write(delegate);
         }
 
-        byte[] bytes = new byte[delegate.readableBytes()];
-
-        delegate.readBytes(bytes);
-
-        byte[] data = DeflateCompressor.FASTEST_INSTANCE.compress(bytes);
-        buf.writeInt(data.length);
-
-        buf.writeBytes(data);
+        AnnuusCompressUtil.doCompress(buf, delegate);
 
         if (Annuus.enableDebugs) {
             Annuus.processedChunks += size;

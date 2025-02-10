@@ -2,6 +2,10 @@ package com.github.cao.awa.annuus;
 
 import com.github.cao.awa.annuus.command.AnnuusConfigCommand;
 import com.github.cao.awa.annuus.command.AnnuusDebugCommand;
+import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
+import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayloadHandler;
+import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedChunkBlockUpdatePayload;
+import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedChunkBlockUpdatePayloadHandler;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayloadHandler;
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayload;
@@ -35,6 +39,14 @@ public class Neoannuus {
 
 //        PayloadTypeRegistryImpl.PLAY_S2C.register(CollectedChunkDataPayload.IDENTIFIER, CollectedChunkDataPayload.CODEC);
 //        PayloadTypeRegistryImpl.CONFIGURATION_C2S.register(NoticeServerAnnuusPayload.IDENTIFIER, NoticeServerAnnuusPayload.CODEC);
+
+        registrar.playToClient(CollectedBlockUpdatePayload.IDENTIFIER, CollectedBlockUpdatePayload.CODEC, (payload, context) -> {
+            CollectedBlockUpdatePayloadHandler.updateBlocksFromPayload(payload, MinecraftClient.getInstance(), (ClientPlayerEntity) context.player());
+        });
+
+        registrar.playToClient(CollectedChunkBlockUpdatePayload.IDENTIFIER, CollectedChunkBlockUpdatePayload.CODEC, (payload, context) -> {
+            CollectedChunkBlockUpdatePayloadHandler.updateBlocksFromPayload(payload, MinecraftClient.getInstance(), (ClientPlayerEntity) context.player());
+        });
 
         registrar.playToClient(CollectedChunkDataPayload.IDENTIFIER, CollectedChunkDataPayload.CODEC, (payload, context) -> {
             CollectedChunkDataPayloadHandler.loadChunksFromPayload(payload, MinecraftClient.getInstance(), (ClientPlayerEntity) context.player());

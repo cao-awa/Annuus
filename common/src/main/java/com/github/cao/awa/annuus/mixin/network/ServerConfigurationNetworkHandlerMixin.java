@@ -15,22 +15,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ServerConfigurationNetworkHandler.class)
-public class ServerConfigurationNetworkHandlerMixin implements AnnuusVersionStorage {
+public class ServerConfigurationNetworkHandlerMixin {
     private static final Logger LOGGER = LoggerFactory.getLogger("AnnuusConfigurationHandler");
-    @Unique
-    private int annuusVersion = -1;
-
-    @Unique
-    @Override
-    public int annuus$getAnnuusVersion() {
-        return this.annuusVersion;
-    }
-
-    @Unique
-    @Override
-    public int annuus$setAnnuusVersion(int version) {
-        return this.annuusVersion = version;
-    }
 
     @Redirect(
             method = "onReady",
@@ -40,15 +26,19 @@ public class ServerConfigurationNetworkHandlerMixin implements AnnuusVersionStor
             )
     )
     public void onReady(PlayerManager instance, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData) {
-        // Setting annuus version.
-        ((AnnuusVersionStorage) player).setAnnuusVersion(this.annuusVersion);
+        AnnuusVersionStorage versionStorage = ((AnnuusVersionStorage) this);
 
-        if (this.annuusVersion > -1) {
-            LOGGER.info("Player {} joining server with Annuus protocol version {}", player.getName().getString(), this.annuusVersion);
+        // Setting annuus version.
+        ((AnnuusVersionStorage) player).setAnnuusVersion(versionStorage.getAnnuusVersion());
+
+        if (versionStorage.getAnnuusVersion() > -1) {
+            LOGGER.info("Player {} joining server with Annuus protocol version {}", player.getName().getString(), versionStorage.getAnnuusVersion());
         }
 
-        Annuus.processedChunks = 0;
-        Annuus.calculatedTimes = 0;
+        if (Annuus.enableDebugs) {
+            Annuus.processedChunks = 0;
+            Annuus.calculatedTimes = 0;
+        }
 
         // Connect to server.
         instance.onPlayerConnect(connection, player, clientData);

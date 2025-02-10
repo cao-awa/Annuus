@@ -3,6 +3,7 @@ package com.github.cao.awa.annuus.command;
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.config.AnnuusConfig;
 import com.github.cao.awa.annuus.config.key.AnnuusConfigKey;
+import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -29,10 +30,17 @@ public class AnnuusConfigCommand {
                         .executes(context -> {
                             int enabledConfigs = Annuus.CONFIG.collectEnabled().size();
 
-                            context.getSource().sendFeedback(
-                                    () -> Text.of("Annuus '" + Annuus.VERSION + "'(" + Annuus.loadingPlatform + ") successfully loaded, has " + enabledConfigs + " configs enabled"),
-                                    false
-                            );
+                            if (context.getSource().getPlayer() != null) {
+                                context.getSource().sendFeedback(
+                                        () -> Text.of("Annuus '" + Annuus.VERSION + "'(" + Annuus.loadingPlatform + ", protocol version " + ((AnnuusVersionStorage) context.getSource().getPlayer()).getAnnuusVersion() + ") successfully loaded, has " + enabledConfigs + " configs enabled"),
+                                        false
+                                );
+                            } else {
+                                context.getSource().sendFeedback(
+                                        () -> Text.of("Annuus '" + Annuus.VERSION + "'(" + Annuus.loadingPlatform + ") successfully loaded, has " + enabledConfigs + " configs enabled"),
+                                        false
+                                );
+                            }
                             return 0;
                         })
                         .requires(context -> context.hasPermissionLevel(4))

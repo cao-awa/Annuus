@@ -14,11 +14,5 @@ public class AnnuusicServer implements DedicatedServerModInitializer {
         ServerConfigurationNetworking.registerGlobalReceiver(NoticeServerAnnuusPayload.IDENTIFIER, (packet, context) -> {
             NoticeServerAnnuusPayloadHandler.updateAnnuusVersion(packet, context.networkHandler());
         });
-
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-            Annuusic.LOGGER.info("Registering commands");
-            AnnuusDebugCommand.register(server);
-            AnnuusConfigCommand.register(server);
-        });
     }
 }

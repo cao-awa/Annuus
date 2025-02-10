@@ -20,6 +20,7 @@ public class AnnuusConfig {
     private static final Logger LOGGER = LogManager.getLogger("AnnuusConfig");
     private static final File CONFIG_FILE = new File("config/annuus.json");
     public static final AnnuusConfigKey<String> CHUNK_COMPRESS = AnnuusConfigKey.create("chunk_compression", "best_compress", "no_compress", "best_compress", "best_speed");
+    public static final AnnuusConfigKey<String> BLOCK_UPDATES_COMPRESS = AnnuusConfigKey.create("block_updates_compression", "best_compress", "no_compress", "best_compress", "best_speed");
 
     private final JSONObject config = new JSONObject();
 
@@ -27,16 +28,32 @@ public class AnnuusConfig {
         return !getConfig(CHUNK_COMPRESS).equals("no_compress");
     }
 
-    public boolean isBestCompress() {
+    public boolean isChunkBestCompress() {
         return getConfig(CHUNK_COMPRESS).equals("best_compress");
     }
 
-    public boolean isBestSpeed() {
+    public boolean isChunkBestSpeed() {
         return getConfig(CHUNK_COMPRESS).equals("best_speed");
     }
 
     public String chunkCompress() {
         return getConfig(CHUNK_COMPRESS);
+    }
+
+    public boolean isEnableBlockUpdatesCompress() {
+        return !getConfig(BLOCK_UPDATES_COMPRESS).equals("no_compress");
+    }
+
+    public boolean isBlockUpdatesBestCompress() {
+        return getConfig(BLOCK_UPDATES_COMPRESS).equals("best_compress");
+    }
+
+    public boolean isBlockUpdatesBestSpeed() {
+        return getConfig(BLOCK_UPDATES_COMPRESS).equals("best_speed");
+    }
+
+    public String blockUpdatesCompress() {
+        return getConfig(BLOCK_UPDATES_COMPRESS);
     }
 
     public <X> void setConfig(AnnuusConfigKey<X> configKey, X value) {
