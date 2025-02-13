@@ -32,10 +32,3 @@ And chunk delta update blocks, every time collect 1229 blocks:
 |            Vanilla | 9.72KB | 29.16KB | 97.2KB  | 311.06KB |
 | Annuus (Deflate 9) | 6.79KB | 20.39KB | 67.97KB | 217.53KB |
 | Annuus (Deflate 1) | 6.35KB | 19.07KB | 63.59KB | 203.5KB  |
-
-# Compatibility
-
-If connecting to the server, the Annuus are not compatible with Sodium now,
-doesn't affect local playing.
-
-Annuus aren't tested with other mods currently.
