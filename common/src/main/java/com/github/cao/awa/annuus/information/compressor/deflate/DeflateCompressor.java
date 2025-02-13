@@ -12,12 +12,19 @@ import java.util.zip.InflaterInputStream;
 
 @Stable
 public class DeflateCompressor implements InformationCompressor {
-    public static final DeflateCompressor BEST_INSTANCE = new DeflateCompressor(true);
-    public static final DeflateCompressor FASTEST_INSTANCE = new DeflateCompressor(false);
-    private final boolean isBestSpeed;
+    public static final DeflateCompressor BEST_INSTANCE = new DeflateCompressor(Deflater.BEST_COMPRESSION);
+    public static final DeflateCompressor DEFLATE_8_INSTANCE = new DeflateCompressor(8);
+    public static final DeflateCompressor DEFLATE_7_INSTANCE = new DeflateCompressor(7);
+    public static final DeflateCompressor DEFLATE_6_INSTANCE = new DeflateCompressor(6);
+    public static final DeflateCompressor DEFLATE_5_INSTANCE = new DeflateCompressor(5);
+    public static final DeflateCompressor DEFLATE_4_INSTANCE = new DeflateCompressor(4);
+    public static final DeflateCompressor DEFLATE_3_INSTANCE = new DeflateCompressor(3);
+    public static final DeflateCompressor DEFLATE_2_INSTANCE = new DeflateCompressor(2);
+    public static final DeflateCompressor FASTEST_INSTANCE = new DeflateCompressor(Deflater.BEST_SPEED);
+    private final int compressLevel;
 
-    public DeflateCompressor(boolean isBestSpeed) {
-        this.isBestSpeed = isBestSpeed;
+    public DeflateCompressor(int compressLevel) {
+        this.compressLevel = compressLevel;
     }
 
     /**
@@ -39,7 +46,7 @@ public class DeflateCompressor implements InformationCompressor {
             IOUtil.write(
                     new DeflaterOutputStream(
                             out,
-                            new Deflater(this.isBestSpeed ? Deflater.BEST_SPEED : Deflater.BEST_COMPRESSION)
+                            new Deflater(this.compressLevel)
                     ),
                     bytes
             );

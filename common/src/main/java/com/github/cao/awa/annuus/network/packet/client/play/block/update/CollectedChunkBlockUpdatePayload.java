@@ -1,10 +1,10 @@
 package com.github.cao.awa.annuus.network.packet.client.play.block.update;
 
 import com.github.cao.awa.annuus.Annuus;
+import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
+import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.annuus.update.ChunkBlockUpdateDetails;
 import com.github.cao.awa.annuus.util.compress.AnnuusCompressUtil;
-import com.github.cao.awa.sinuatum.util.collection.CollectionFactor;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
 import net.minecraft.block.Block;
@@ -12,14 +12,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -33,6 +30,11 @@ public record CollectedChunkBlockUpdatePayload(
             CollectedChunkBlockUpdatePayload::encode,
             CollectedChunkBlockUpdatePayload::decode
     );
+    private static InformationCompressor currentCompressor = DeflateCompressor.BEST_INSTANCE;
+
+    public static void setCurrentCompressor(InformationCompressor compressor) {
+        currentCompressor = compressor;
+    }
 
     public static CustomPayloadS2CPacket createPacket(ChunkSectionPos sectionPos, short[] positions, BlockState[] updates) {
         Map<Long, ChunkBlockUpdateDetails> details = new Long2ObjectRBTreeMap<>();
@@ -68,7 +70,7 @@ public record CollectedChunkBlockUpdatePayload(
 
     private static CollectedChunkBlockUpdatePayload decode(PacketByteBuf buf) {
         try {
-            PacketByteBuf delegate = AnnuusCompressUtil.doDecompress(buf);
+            PacketByteBuf delegate = AnnuusCompressUtil.doDecompress(buf, () -> currentCompressor);
 
             int chunks = delegate.readInt();
 
@@ -156,7 +158,7 @@ public record CollectedChunkBlockUpdatePayload(
             }
         }
 
-        AnnuusCompressUtil.doCompress(buf, delegate);
+        AnnuusCompressUtil.doCompress(buf, delegate, () -> currentCompressor);
 
         if (Annuus.enableDebugs) {
             Annuus.processedBlockUpdateBytes += buf.readableBytes();

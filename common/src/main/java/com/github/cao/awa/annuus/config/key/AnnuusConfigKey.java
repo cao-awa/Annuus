@@ -3,16 +3,22 @@ package com.github.cao.awa.annuus.config.key;
 import com.github.cao.awa.apricot.util.collection.ApricotCollectionFactor;
 import com.github.cao.awa.sinuatum.manipulate.Manipulate;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
-public record AnnuusConfigKey<T>(String name, Class<T> type, T defaultValue, List<T> limits) {
-    public static <X> AnnuusConfigKey<X> create(String name, X defaultValue) {
-        return new AnnuusConfigKey<>(name, Manipulate.cast(defaultValue.getClass()), defaultValue, ApricotCollectionFactor.arrayList());
+public record AnnuusConfigKey<T>(String name, Consumer<T> callback, Class<T> type, T defaultValue, List<T> limits) {
+    public static <X> AnnuusConfigKey<X> create(String name, Consumer<X> callback, X defaultValue) {
+        return new AnnuusConfigKey<>(name, callback, Manipulate.cast(defaultValue.getClass()), defaultValue, ApricotCollectionFactor.arrayList());
     }
 
     @SafeVarargs
-    public static <X> AnnuusConfigKey<X> create(String name, X defaultValue, X... limits) {
-        return new AnnuusConfigKey<>(name, Manipulate.cast(defaultValue.getClass()), defaultValue, ApricotCollectionFactor.arrayList(limits));
+    public static <X> AnnuusConfigKey<X> create(String name, Consumer<X> callback, X defaultValue, X... limits) {
+        return new AnnuusConfigKey<>(name, callback, Manipulate.cast(defaultValue.getClass()), defaultValue, ApricotCollectionFactor.arrayList(limits));
+    }
+
+    public static <X> AnnuusConfigKey<X> create(String name, Consumer<X> callback, X defaultValue, Collection<X> limits) {
+        return new AnnuusConfigKey<>(name, callback, Manipulate.cast(defaultValue.getClass()), defaultValue, ApricotCollectionFactor.arrayList(limits));
     }
 
     @SafeVarargs

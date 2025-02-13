@@ -1,6 +1,8 @@
 package com.github.cao.awa.annuus.network.packet.client.play.chunk.data;
 
 import com.github.cao.awa.annuus.Annuus;
+import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
+import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.annuus.util.compress.AnnuusCompressUtil;
 import com.github.cao.awa.sinuatum.util.collection.CollectionFactor;
 import io.netty.buffer.Unpooled;
@@ -31,6 +33,11 @@ public record CollectedChunkDataPayload(
             CollectedChunkDataPayload::encode,
             CollectedChunkDataPayload::decode
     );
+    private static InformationCompressor currentCompressor = DeflateCompressor.BEST_INSTANCE;
+
+    public static void setCurrentCompressor(InformationCompressor compressor) {
+        currentCompressor = compressor;
+    }
 
     public static CustomPayloadS2CPacket createPacket(WorldChunk[] chunks, LightingProvider lightProvider) {
         return new CustomPayloadS2CPacket(createData(chunks, lightProvider));
@@ -61,7 +68,7 @@ public record CollectedChunkDataPayload(
 
     private static CollectedChunkDataPayload decode(RegistryByteBuf buf) {
         try {
-            RegistryByteBuf delegate = AnnuusCompressUtil.doDecompressRegistryBuf(buf);
+            RegistryByteBuf delegate = AnnuusCompressUtil.doDecompressRegistryBuf(buf, () -> currentCompressor);
 
             int size = delegate.readInt();
 
@@ -120,7 +127,7 @@ public record CollectedChunkDataPayload(
             lightData.write(delegate);
         }
 
-        AnnuusCompressUtil.doCompress(buf, delegate);
+        AnnuusCompressUtil.doCompress(buf, delegate, () -> currentCompressor);
 
         if (Annuus.enableDebugs) {
             Annuus.processedChunks += size;
