@@ -34,8 +34,9 @@ public class CollectedChunkDataPayloadHandler {
                 int z = payload.zPositions().getInt(i);
 
                 world.getChunkManager().loadChunkFromPacket(x, z, chunkData.getSectionsDataBuf(), chunkData.getHeightmap(), chunkData.getBlockEntities(x, z));
+                readLightData(world, x, z, lightData, false);
+
                 world.enqueueChunkUpdate(() -> {
-                    readLightData(world, x, z, lightData, false);
                     Manipulate.makeNonNull(world.getChunkManager().getWorldChunk(x, z, false), chunk -> {
                         scheduleRenderChunk(world, chunk, x, z);
                         client.worldRenderer.scheduleNeighborUpdates(chunk.getPos());
@@ -58,7 +59,14 @@ public class CollectedChunkDataPayloadHandler {
             lightingProvider.setSectionStatus(ChunkSectionPos.from(chunkPos, j), chunkSection.isEmpty());
         }
 
-        world.scheduleChunkRenders(x - 1, world.getBottomSectionCoord(), z - 1, x + 1, world.getTopSectionCoord(), z + 1);
+        world.scheduleChunkRenders(
+                x - 1,
+                world.getBottomSectionCoord(),
+                z - 1,
+                x + 1,
+                world.getTopSectionCoord(),
+                z + 1
+        );
     }
 
     private static void readLightData(ClientWorld world, int x, int z, LightData data, boolean bl) {
@@ -88,12 +96,19 @@ public class CollectedChunkDataPayloadHandler {
         lightingProvider.setColumnEnabled(new ChunkPos(x, z), true);
     }
 
-    private static void updateLighting(ClientWorld world, int chunkX, int chunkZ, LightingProvider provider, LightType type, BitSet inited, BitSet uninited, Iterator<byte[]> nibbles, boolean bl) {
+    private static void updateLighting(ClientWorld world, int chunkX, int chunkZ, LightingProvider provider, LightType type, BitSet initialized, BitSet uninitialized, Iterator<byte[]> nibbles, boolean bl) {
         for (int i = 0; i < provider.getHeight(); ++i) {
-            boolean initedBit = inited.get(i);
-            if (initedBit || uninited.get(i)) {
+            boolean initializedBit = initialized.get(i);
+            if (!initializedBit) {
+                continue;
+            }
+            if (uninitialized.get(i)) {
                 int j = provider.getBottomY() + i;
-                provider.enqueueSectionData(type, ChunkSectionPos.from(chunkX, j, chunkZ), initedBit ? new ChunkNibbleArray(nibbles.next().clone()) : new ChunkNibbleArray());
+                provider.enqueueSectionData(
+                        type,
+                        ChunkSectionPos.from(chunkX, j, chunkZ),
+                        new ChunkNibbleArray(nibbles.next().clone())
+                );
                 if (bl) {
                     world.scheduleBlockRenders(chunkX, j, chunkZ);
                 }
