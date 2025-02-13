@@ -68,7 +68,7 @@ public record CollectedChunkDataPayload(
 
     private static CollectedChunkDataPayload decode(RegistryByteBuf buf) {
         try {
-            RegistryByteBuf delegate = AnnuusCompressUtil.doDecompressRegistryBuf(buf, () -> currentCompressor);
+            RegistryByteBuf delegate = AnnuusCompressUtil.doDecompressRegistryBuf(buf);
 
             int size = delegate.readInt();
 

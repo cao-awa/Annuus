@@ -13,6 +13,8 @@ import com.github.cao.awa.apricot.annotations.Stable;
 public interface InformationCompressor {
     byte[] EMPTY_BYTES = new byte[0];
 
+    int getId();
+
     /**
      * Compress for a data.
      *

@@ -1,9 +1,15 @@
 package com.github.cao.awa.annuus.information.compressor.inaction;
 
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
+import com.github.cao.awa.annuus.information.compressor.InformationCompressors;
 
 public class InactionCompressor implements InformationCompressor {
-    public static final InactionCompressor INSTANCE = new InactionCompressor();
+    public static final InactionCompressor INSTANCE = InformationCompressors.register(new InactionCompressor());
+
+    @Override
+    public int getId() {
+        return -1;
+    }
 
     /**
      * Return the source, because inaction compressor will not compress the data.

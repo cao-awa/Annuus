@@ -1,6 +1,7 @@
 package com.github.cao.awa.annuus.network.packet.client.play.block.update;
 
 import com.github.cao.awa.annuus.Annuus;
+import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.annuus.util.compress.AnnuusCompressUtil;
 import com.github.cao.awa.sinuatum.util.collection.CollectionFactor;
@@ -32,6 +33,11 @@ public record CollectedBlockUpdatePayload(
             CollectedBlockUpdatePayload::encode,
             CollectedBlockUpdatePayload::decode
     );
+    private static InformationCompressor currentCompressor = DeflateCompressor.BEST_INSTANCE;
+
+    public static void setCurrentCompressor(InformationCompressor compressor) {
+        currentCompressor = compressor;
+    }
 
     public static CustomPayloadS2CPacket createPacket(Map<Long, BlockState> updates) {
         return new CustomPayloadS2CPacket(createData(updates));
@@ -87,7 +93,7 @@ public record CollectedBlockUpdatePayload(
             blockStateCodec.encode(delegate, blockState);
         }
 
-        AnnuusCompressUtil.doCompress(buf, delegate);
+        AnnuusCompressUtil.doCompress(buf, delegate, () -> currentCompressor);
 
         if (Annuus.enableDebugs) {
             Annuus.processedChunks += size;

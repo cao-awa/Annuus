@@ -6,6 +6,7 @@ import com.github.cao.awa.annuus.config.key.AnnuusConfigKey;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.annuus.information.compressor.lz4.Lz4Compressor;
+import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedChunkBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
 import com.github.cao.awa.sinuatum.manipulate.Manipulate;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -37,7 +39,8 @@ public class AnnuusConfig {
             "deflate_6",
             "deflate_7",
             "deflate_8",
-            "deflate_9"
+            "deflate_9",
+            "lz4"
     );
     private static final Function<String, InformationCompressor> COMPRESSOR_FETCHER = (compressOption) -> {
         if (compressOption.startsWith("deflate_")) {
@@ -71,7 +74,10 @@ public class AnnuusConfig {
     );
     public static final AnnuusConfigKey<String> BLOCK_UPDATES_COMPRESS = AnnuusConfigKey.create(
             "block_updates_compression",
-            (compressOption) -> CollectedChunkBlockUpdatePayload.setCurrentCompressor(COMPRESSOR_FETCHER.apply(compressOption)),
+            (compressOption) -> {
+                CollectedBlockUpdatePayload.setCurrentCompressor(COMPRESSOR_FETCHER.apply(compressOption));
+                CollectedChunkBlockUpdatePayload.setCurrentCompressor(COMPRESSOR_FETCHER.apply(compressOption));
+            },
             "best_compress",
             COMPRESS_OPTIONS
     );
