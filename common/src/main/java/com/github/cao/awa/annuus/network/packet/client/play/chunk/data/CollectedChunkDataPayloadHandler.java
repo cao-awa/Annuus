@@ -1,15 +1,21 @@
 package com.github.cao.awa.annuus.network.packet.client.play.chunk.data;
 
 import com.github.cao.awa.sinuatum.manipulate.Manipulate;
+import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.packet.s2c.play.ChunkData;
+import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.network.packet.s2c.play.LightData;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.LightType;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
@@ -20,99 +26,34 @@ import java.util.Iterator;
 
 public class CollectedChunkDataPayloadHandler {
     public static void loadChunksFromPayload(CollectedChunkDataPayload payload, MinecraftClient client, ClientPlayerEntity player) {
-        client.executeSync(() -> {
-            ClientPlayNetworkHandler networkHandler = player.networkHandler;
-            ClientWorld world = networkHandler.getWorld();
-            Iterator<ChunkData> chunkDataIterator = payload.chunkData().iterator();
-            Iterator<LightData> lightDataIterator = payload.lightData().iterator();
-            int i = 0;
+        ClientPlayNetworkHandler networkHandler = player.networkHandler;
+        ClientWorld world = networkHandler.getWorld();
 
-            while (chunkDataIterator.hasNext()) {
-                ChunkData chunkData = chunkDataIterator.next();
-                LightData lightData = lightDataIterator.next();
-                int x = payload.xPositions().getInt(i);
-                int z = payload.zPositions().getInt(i);
+        RegistryByteBuf delegateBuf = Manipulate.make(
+                new RegistryByteBuf(
+                        new PacketByteBuf(Unpooled.buffer()),
+                        world.getRegistryManager()
+                ),
+                buf -> {
+                    Iterator<ChunkData> chunkDataIterator = payload.chunkData().iterator();
+                    Iterator<LightData> lightDataIterator = payload.lightData().iterator();
+                    IntList xPositions = payload.xPositions();
+                    IntList zPositions = payload.zPositions();
 
-                world.getChunkManager().loadChunkFromPacket(x, z, chunkData.getSectionsDataBuf(), chunkData.getHeightmap(), chunkData.getBlockEntities(x, z));
-                readLightData(world, x, z, lightData, false);
+                    int i = 0;
+                    while (chunkDataIterator.hasNext()) {
+                        buf.writeInt(xPositions.getInt(i));
+                        buf.writeInt(zPositions.getInt(i));
+                        chunkDataIterator.next().write(buf);
+                        lightDataIterator.next().write(buf);
 
-                world.enqueueChunkUpdate(() -> {
-                    Manipulate.makeNonNull(world.getChunkManager().getWorldChunk(x, z, false), chunk -> {
-                        scheduleRenderChunk(world, chunk, x, z);
-                        client.worldRenderer.scheduleNeighborUpdates(chunk.getPos());
-                    });
-                });
-
-                i++;
-            }
-        });
-    }
-
-    private static void scheduleRenderChunk(ClientWorld world, WorldChunk chunk, int x, int z) {
-        LightingProvider lightingProvider = world.getChunkManager().getLightingProvider();
-        ChunkSection[] chunkSections = chunk.getSectionArray();
-        ChunkPos chunkPos = chunk.getPos();
-
-        for (int i = 0; i < chunkSections.length; ++i) {
-            ChunkSection chunkSection = chunkSections[i];
-            int j = world.sectionIndexToCoord(i);
-            lightingProvider.setSectionStatus(ChunkSectionPos.from(chunkPos, j), chunkSection.isEmpty());
-        }
-
-        world.scheduleChunkRenders(
-                x - 1,
-                world.getBottomSectionCoord(),
-                z - 1,
-                x + 1,
-                world.getTopSectionCoord(),
-                z + 1
-        );
-    }
-
-    private static void readLightData(ClientWorld world, int x, int z, LightData data, boolean bl) {
-        LightingProvider lightingProvider = world.getChunkManager().getLightingProvider();
-        updateLighting(
-                world,
-                x,
-                z,
-                lightingProvider,
-                LightType.SKY,
-                data.getInitedSky(),
-                data.getUninitedSky(),
-                data.getSkyNibbles().iterator(),
-                bl
-        );
-        updateLighting(
-                world,
-                x,
-                z,
-                lightingProvider,
-                LightType.BLOCK,
-                data.getInitedBlock(),
-                data.getUninitedBlock(),
-                data.getBlockNibbles().iterator(),
-                bl
-        );
-        lightingProvider.setColumnEnabled(new ChunkPos(x, z), true);
-    }
-
-    private static void updateLighting(ClientWorld world, int chunkX, int chunkZ, LightingProvider provider, LightType type, BitSet initialized, BitSet uninitialized, Iterator<byte[]> nibbles, boolean bl) {
-        for (int i = 0; i < provider.getHeight(); ++i) {
-            boolean initializedBit = initialized.get(i);
-            if (!initializedBit) {
-                continue;
-            }
-            if (uninitialized.get(i)) {
-                int j = provider.getBottomY() + i;
-                provider.enqueueSectionData(
-                        type,
-                        ChunkSectionPos.from(chunkX, j, chunkZ),
-                        new ChunkNibbleArray(nibbles.next().clone())
-                );
-                if (bl) {
-                    world.scheduleBlockRenders(chunkX, j, chunkZ);
+                        i++;
+                    }
                 }
-            }
+        );
+
+        while (delegateBuf.readableBytes() > 0) {
+            networkHandler.onChunkData(ChunkDataS2CPacket.CODEC.decode(delegateBuf));
         }
     }
 }
