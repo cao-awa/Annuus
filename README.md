@@ -32,3 +32,8 @@ And chunk delta update blocks, every time collect 1229 blocks:
 |            Vanilla | 9.72KB | 29.16KB | 97.2KB  | 311.06KB |
 | Annuus (Deflate 9) | 6.79KB | 20.39KB | 67.97KB | 217.53KB |
 | Annuus (Deflate 1) | 6.35KB | 19.07KB | 63.59KB | 203.5KB  |
+
+# Configuration
+Config ``chunk_compression`` and ``block_updates_compression`` have options: ``no_compress``, ``lz4``, ``best_speed``, ``deflate_1``, ``deflate_2``, ``deflate_3``, ``deflate_4``, ``deflate_5``, ``deflate_6``, ``deflate_7``, ``deflate_8``, ``deflate_9``, ``best_compress``. 
+
+The ``best_speed`` is alias of ``deflate_1``, ``best_compress`` is ``deflate_9``.
