@@ -27,12 +27,5 @@ versionRange = "[1.21,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.annuus]]
-modId = "architectury"
-type = "required"
-versionRange = "[15.0.1,)"
-ordering = "AFTER"
-side = "BOTH"
-
 [[mixins]]
 config = "annuus.mixins.json"
