@@ -2,6 +2,8 @@ package com.github.cao.awa.annuus.mixin.network;
 
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ConnectedClientData;
@@ -10,22 +12,20 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ServerConfigurationNetworkHandler.class)
 public class ServerConfigurationNetworkHandlerMixin {
     private static final Logger LOGGER = LoggerFactory.getLogger("AnnuusConfigurationHandler");
 
-    @Redirect(
+    @WrapOperation(
             method = "onReady",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/server/PlayerManager;onPlayerConnect(Lnet/minecraft/network/ClientConnection;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/server/network/ConnectedClientData;)V"
             )
     )
-    public void onReady(PlayerManager instance, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData) {
+    public void onReady(PlayerManager instance, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, Operation<Void> original) {
         AnnuusVersionStorage versionStorage = ((AnnuusVersionStorage) this);
 
         // Setting annuus version.
@@ -41,6 +41,6 @@ public class ServerConfigurationNetworkHandlerMixin {
         }
 
         // Connect to server.
-        instance.onPlayerConnect(connection, player, clientData);
+        original.call(instance, connection, player, clientData);
     }
 }
