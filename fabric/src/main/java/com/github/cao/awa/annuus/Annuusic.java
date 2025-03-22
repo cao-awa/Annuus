@@ -8,11 +8,9 @@ import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.Collected
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayload;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.impl.networking.PayloadTypeRegistryImpl;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Set;
 
 public class Annuusic implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("Annuusic");
@@ -25,10 +23,10 @@ public class Annuusic implements ModInitializer {
 
         Annuus.onInitialize();
 
-        PayloadTypeRegistryImpl.PLAY_S2C.register(CollectedChunkDataPayload.IDENTIFIER, CollectedChunkDataPayload.CODEC);
-        PayloadTypeRegistryImpl.PLAY_S2C.register(CollectedBlockUpdatePayload.IDENTIFIER, CollectedBlockUpdatePayload.CODEC);
-        PayloadTypeRegistryImpl.PLAY_S2C.register(CollectedChunkBlockUpdatePayload.IDENTIFIER, CollectedChunkBlockUpdatePayload.CODEC);
-        PayloadTypeRegistryImpl.CONFIGURATION_C2S.register(NoticeServerAnnuusPayload.IDENTIFIER, NoticeServerAnnuusPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(CollectedChunkDataPayload.IDENTIFIER, CollectedChunkDataPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(CollectedBlockUpdatePayload.IDENTIFIER, CollectedBlockUpdatePayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(CollectedChunkBlockUpdatePayload.IDENTIFIER, CollectedChunkBlockUpdatePayload.CODEC);
+        PayloadTypeRegistry.configurationC2S().register(NoticeServerAnnuusPayload.IDENTIFIER, NoticeServerAnnuusPayload.CODEC);
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             Annuusic.LOGGER.info("Registering commands");
