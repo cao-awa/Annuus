@@ -7,7 +7,6 @@ import com.github.cao.awa.annuus.util.compress.AnnuusCompressUtil;
 import com.github.cao.awa.sinuatum.util.collection.CollectionFactor;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.network.PacketByteBuf;
@@ -16,12 +15,7 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
-import net.minecraft.network.packet.s2c.play.ChunkData;
-import net.minecraft.network.packet.s2c.play.LightData;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.chunk.light.LightingProvider;
 
 import java.util.Map;
 
@@ -51,13 +45,13 @@ public record CollectedBlockUpdatePayload(
         try {
             RegistryByteBuf delegate = AnnuusCompressUtil.doDecompressRegistryBuf(buf);
 
-            int size = delegate.readInt();
+            int size = delegate.readVarInt();
 
             long[] positions = new long[size];
             BlockState[] states = new BlockState[size];
 
             for (int i = 0; i < size; i++) {
-                positions[i] = delegate.readLong();
+                positions[i] = delegate.readVarLong();
             }
 
             PacketCodec<ByteBuf, BlockState> blockStateCodec = PacketCodecs.entryOf(Block.STATE_IDS);
@@ -82,10 +76,10 @@ public record CollectedBlockUpdatePayload(
 
         int size = packet.committed.size();
 
-        delegate.writeInt(size);
+        delegate.writeVarInt(size);
 
         for (long position : packet.committed.keySet()) {
-            delegate.writeLong(position);
+            delegate.writeVarLong(position);
         }
 
         PacketCodec<ByteBuf, BlockState> blockStateCodec = PacketCodecs.entryOf(Block.STATE_IDS);

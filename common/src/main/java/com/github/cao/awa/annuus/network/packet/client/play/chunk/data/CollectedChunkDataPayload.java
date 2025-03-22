@@ -70,17 +70,17 @@ public record CollectedChunkDataPayload(
         try {
             RegistryByteBuf delegate = AnnuusCompressUtil.doDecompressRegistryBuf(buf);
 
-            int size = delegate.readInt();
+            int size = delegate.readVarInt();
 
             IntList xPositions = new IntArrayList();
             IntList zPositions = new IntArrayList();
 
             for (int i = 0; i < size; i++) {
-                xPositions.add(delegate.readInt());
+                xPositions.add(delegate.readVarInt());
             }
 
             for (int i = 0; i < size; i++) {
-                zPositions.add(delegate.readInt());
+                zPositions.add(delegate.readVarInt());
             }
 
             List<ChunkData> chunkDataList = CollectionFactor.arrayList();
@@ -112,13 +112,13 @@ public record CollectedChunkDataPayload(
 
         int size = packet.chunkData.size();
 
-        delegate.writeInt(size);
+        delegate.writeVarInt(size);
 
         for (int position : packet.xPositions) {
-            delegate.writeInt(position);
+            delegate.writeVarInt(position);
         }
         for (int position : packet.zPositions) {
-            delegate.writeInt(position);
+            delegate.writeVarInt(position);
         }
         for (ChunkData chunkData : packet.chunkData) {
             chunkData.write(delegate);
