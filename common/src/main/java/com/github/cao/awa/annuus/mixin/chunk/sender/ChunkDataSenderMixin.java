@@ -3,6 +3,8 @@ package com.github.cao.awa.annuus.mixin.chunk.sender;
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.network.packet.s2c.play.ChunkSentS2CPacket;
 import net.minecraft.network.packet.s2c.play.StartChunkSendS2CPacket;
 import net.minecraft.server.network.ChunkDataSender;
@@ -15,7 +17,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
@@ -39,11 +40,11 @@ public class ChunkDataSenderMixin {
         this.player = player;
     }
 
-    @Redirect(
+    @WrapOperation(
             method = "sendChunkBatches",
             at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z")
     )
-    public boolean sendChunkBatches(List<WorldChunk> list) {
+    public boolean sendChunkBatches(List<WorldChunk> list, Operation<Boolean> original) {
         // Only collect data when player installed annuus.
         if (((AnnuusVersionStorage) this.player).getAnnuusVersion() >= 2 && Annuus.CONFIG.isEnableChunkCompress()) {
             // Send chunks using the collected packet.
@@ -73,7 +74,7 @@ public class ChunkDataSenderMixin {
             return true;
         }
         // If the player doesn't install annuus, let vanilla send packets instead of annuus.
-        return list.isEmpty();
+        return original.call(list);
     }
 
     @Inject(
