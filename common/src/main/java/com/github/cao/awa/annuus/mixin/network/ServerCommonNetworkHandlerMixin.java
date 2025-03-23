@@ -35,11 +35,6 @@ public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionSt
     private Map<Long, ChunkBlockUpdateDetails> chunkUpdates = new Long2ObjectRBTreeMap<>();
 
     @Unique
-    public void send(Packet<?> packet) {
-        send(packet, null);
-    }
-
-    @Unique
     @Override
     public int annuus$getAnnuusVersion() {
         return this.annuusVersion;
@@ -56,7 +51,7 @@ public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionSt
             at = @At("HEAD"),
             cancellable = true
     )
-    public void collectBlockUpdate(Packet<?> packet, PacketCallbacks callbacks, CallbackInfo ci) {
+    public void collectBlockUpdate(Packet<?> packet, CallbackInfo ci) {
         if (this.annuusVersion >= 3 && Annuus.CONFIG.isEnableBlockUpdatesCompress()) {
             boolean shouldCancel = false;
 
@@ -96,13 +91,13 @@ public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionSt
     )
     public void sendCollectedBlockUpdates(CallbackInfo ci) {
         if (!this.updates.isEmpty()) {
-            send(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.updates)));
+            send(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.updates)), null);
 
             this.updates.clear();
         }
 
         if (!this.chunkUpdates.isEmpty()) {
-            send(CollectedChunkBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.chunkUpdates)));
+            send(CollectedChunkBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.chunkUpdates)), null);
 
             this.chunkUpdates.clear();
         }
