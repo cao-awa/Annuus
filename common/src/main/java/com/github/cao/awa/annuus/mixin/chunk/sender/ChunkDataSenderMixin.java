@@ -46,7 +46,7 @@ public class ChunkDataSenderMixin {
     )
     public boolean sendChunkBatches(List<WorldChunk> list, Operation<Boolean> original) {
         // Only collect data when player installed annuus.
-        if (((AnnuusVersionStorage) this.player).getAnnuusVersion() >= 2 && Annuus.CONFIG.isEnableChunkCompress()) {
+        if (((AnnuusVersionStorage) this.player).getAnnuusVersion() >= 3 && Annuus.CONFIG.isEnableChunkCompress()) {
             // Send chunks using the collected packet.
             if (!list.isEmpty()) {
                 // Start sending.
