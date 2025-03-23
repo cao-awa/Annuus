@@ -2,10 +2,7 @@ package com.github.cao.awa.annuus;
 
 import com.github.cao.awa.annuus.command.AnnuusConfigCommand;
 import com.github.cao.awa.annuus.command.AnnuusDebugCommand;
-import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
-import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayloadHandler;
-import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedChunkBlockUpdatePayload;
-import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedChunkBlockUpdatePayloadHandler;
+import com.github.cao.awa.annuus.network.packet.client.play.block.update.*;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayloadHandler;
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayload;

@@ -72,17 +72,17 @@ public record CollectedChunkBlockUpdatePayload(
         try {
             PacketByteBuf delegate = AnnuusCompressUtil.doDecompress(buf);
 
-            int chunks = delegate.readInt();
+            int chunks = delegate.readVarInt();
 
             long[] chunkPositions = new long[chunks];
 
             for (int i = 0; i < chunks; i++) {
-                chunkPositions[i] = delegate.readLong();
+                chunkPositions[i] = delegate.readVarLong();
             }
 
             int[] updates = new int[chunks];
             for (int i = 0; i < chunks; i++) {
-                updates[i] = delegate.readInt();
+                updates[i] = delegate.readVarInt();
             }
 
             short[][] updatePositions = new short[chunks][];
@@ -97,7 +97,7 @@ public record CollectedChunkBlockUpdatePayload(
             for (int i = 0; i < chunks; i++) {
                 updateStates[i] = new int[updates[i]];
                 for (int stateIndex = 0; stateIndex < updates[i]; stateIndex++) {
-                    updateStates[i][stateIndex] = delegate.readInt();
+                    updateStates[i][stateIndex] = delegate.readVarInt();
                 }
             }
 
@@ -130,16 +130,16 @@ public record CollectedChunkBlockUpdatePayload(
 
         int size = chunks.size();
 
-        delegate.writeInt(size);
+        delegate.writeVarInt(size);
 
         for (long chunkPos : chunks) {
-            delegate.writeLong(chunkPos);
+            delegate.writeVarLong(chunkPos);
         }
 
         Collection<ChunkBlockUpdateDetails> updateDetails = packet.details.values();
 
         for (ChunkBlockUpdateDetails updateDetail : updateDetails) {
-            delegate.writeInt(updateDetail.positions().length);
+            delegate.writeVarInt(updateDetail.positions().length);
 
             if (Annuus.enableDebugs) {
                 Annuus.processedBlockUpdates += updateDetail.positions().length;
@@ -154,7 +154,7 @@ public record CollectedChunkBlockUpdatePayload(
 
         for (ChunkBlockUpdateDetails updateDetail : updateDetails) {
             for (int states : updateDetail.states()) {
-                delegate.writeInt(states);
+                delegate.writeVarInt(states);
             }
         }
 

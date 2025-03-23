@@ -9,7 +9,7 @@ import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 
 public record NoticeServerAnnuusPayload(int versionId) implements CustomPayload {
-    public static final Id<NoticeServerAnnuusPayload> IDENTIFIER = new Id<>(Identifier.of("annuus:notice_annuus"));
+    public static final Id<NoticeServerAnnuusPayload> IDENTIFIER = new Id<>(Identifier.of("annuus:notice_annuus_version"));
     public static final PacketCodec<PacketByteBuf, NoticeServerAnnuusPayload> CODEC = PacketCodec.tuple(
         PacketCodecs.VAR_INT, NoticeServerAnnuusPayload::versionId,
         NoticeServerAnnuusPayload::new
