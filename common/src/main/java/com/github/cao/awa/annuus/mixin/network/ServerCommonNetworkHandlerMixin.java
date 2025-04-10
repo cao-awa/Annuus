@@ -51,7 +51,7 @@ public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionSt
             at = @At("HEAD"),
             cancellable = true
     )
-    public void collectBlockUpdate(Packet<?> packet, CallbackInfo ci) {
+    public void collectBlockUpdate(Packet<?> packet, PacketCallbacks callbacks, CallbackInfo ci) {
         if (this.annuusVersion >= 3 && Annuus.CONFIG.isEnableBlockUpdatesCompress()) {
             boolean shouldCancel = false;
 
