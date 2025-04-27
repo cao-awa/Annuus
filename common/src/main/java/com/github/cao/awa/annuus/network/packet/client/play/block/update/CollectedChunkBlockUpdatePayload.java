@@ -164,6 +164,7 @@ public record CollectedChunkBlockUpdatePayload(
             Annuus.processedBlockUpdateBytes += buf.readableBytes();
         }
     }
+
     @Override
     public Id<? extends CustomPayload> getId() {
         return IDENTIFIER;
