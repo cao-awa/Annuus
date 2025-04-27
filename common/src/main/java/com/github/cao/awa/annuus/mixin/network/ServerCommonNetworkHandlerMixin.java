@@ -25,8 +25,8 @@ import java.util.Map;
 
 @Mixin(ServerCommonNetworkHandler.class)
 public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionStorage {
-    @Shadow
-    public abstract void send(Packet<?> packet, PacketCallbacks callbacks);
+    @Shadow public abstract void sendPacket(Packet<?> packet);
+
     @Unique
     private int annuusVersion = -1;
     @Unique
@@ -47,11 +47,11 @@ public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionSt
     }
 
     @Inject(
-            method = "send",
+            method = "sendPacket",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void collectBlockUpdate(Packet<?> packet, PacketCallbacks callbacks, CallbackInfo ci) {
+    public void collectBlockUpdate(Packet<?> packet, CallbackInfo ci) {
         if (this.annuusVersion >= 3 && Annuus.CONFIG.isEnableBlockUpdatesCompress()) {
             boolean shouldCancel = false;
 
@@ -91,13 +91,13 @@ public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionSt
     )
     public void sendCollectedBlockUpdates(CallbackInfo ci) {
         if (!this.updates.isEmpty()) {
-            send(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.updates)), null);
+            sendPacket(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.updates)));
 
             this.updates.clear();
         }
 
         if (!this.chunkUpdates.isEmpty()) {
-            send(CollectedChunkBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.chunkUpdates)), null);
+            sendPacket(CollectedChunkBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.chunkUpdates)));
 
             this.chunkUpdates.clear();
         }
