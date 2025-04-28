@@ -8,11 +8,13 @@ import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
 import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket;
 import net.minecraft.server.network.*;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -25,8 +27,7 @@ import java.util.Map;
 
 @Mixin(ServerCommonNetworkHandler.class)
 public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionStorage {
-    @Shadow public abstract void sendPacket(Packet<?> packet);
-
+    @Shadow @Final protected ClientConnection connection;
     @Unique
     private int annuusVersion = -1;
     @Unique
@@ -91,13 +92,13 @@ public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionSt
     )
     public void sendCollectedBlockUpdates(CallbackInfo ci) {
         if (!this.updates.isEmpty()) {
-            sendPacket(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.updates)));
+            this.connection.send(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.updates)));
 
             this.updates.clear();
         }
 
         if (!this.chunkUpdates.isEmpty()) {
-            sendPacket(CollectedChunkBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.chunkUpdates)));
+            this.connection.send(CollectedChunkBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.chunkUpdates)));
 
             this.chunkUpdates.clear();
         }
