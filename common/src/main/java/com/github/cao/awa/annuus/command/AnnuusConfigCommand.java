@@ -46,6 +46,8 @@ public class AnnuusConfigCommand {
                         .requires(context -> context.hasPermissionLevel(4))
                         .then(createStringConfigNode(AnnuusConfig.CHUNK_COMPRESS))
                         .then(createStringConfigNode(AnnuusConfig.BLOCK_UPDATES_COMPRESS))
+                        .then(createBoolConfigNode(AnnuusConfig.SHORT_RECIPES))
+                        .then(createStringConfigNode(AnnuusConfig.SHORT_RECIPES_COMPRESS))
         );
     }
 

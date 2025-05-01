@@ -3,6 +3,7 @@ package com.github.cao.awa.annuus.network.packet.client.play.recipe;
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
+import com.github.cao.awa.annuus.recipe.AnnuusRecipeEntries;
 import com.github.cao.awa.annuus.update.ChunkBlockUpdateDetails;
 import com.github.cao.awa.annuus.util.compress.AnnuusCompressUtil;
 import io.netty.buffer.Unpooled;
@@ -21,7 +22,7 @@ import net.minecraft.util.math.ChunkSectionPos;
 import java.util.*;
 
 public record ShortRecipeSyncPayload(
-        RecipeEntry<?>[] recipes
+        AnnuusRecipeEntries recipes
 ) implements CustomPayload {
     public static final Id<ShortRecipeSyncPayload> IDENTIFIER = new Id<>(Identifier.of("annuus:short_recipe_sync"));
     public static final PacketCodec<RegistryByteBuf, ShortRecipeSyncPayload> CODEC = PacketCodec.ofStatic(
@@ -39,21 +40,20 @@ public record ShortRecipeSyncPayload(
     }
 
     public static ShortRecipeSyncPayload createData(RecipeEntry<?>[] recipes) {
+        return new ShortRecipeSyncPayload(AnnuusRecipeEntries.create(recipes));
+    }
+
+    public static ShortRecipeSyncPayload createData(AnnuusRecipeEntries recipes) {
         return new ShortRecipeSyncPayload(recipes);
     }
 
-    // TODO
     private static ShortRecipeSyncPayload decode(RegistryByteBuf buf) {
         try {
             RegistryByteBuf delegate = AnnuusCompressUtil.doDecompressRegistryBuf(buf);
 
-            int recipeCount = delegate.readVarInt();
-
-            RecipeEntry<?>[] recipes = new RecipeEntry[recipeCount];
-
-            for (int i = 0; i < recipeCount; i++) {
-                recipes[i] = RecipeEntry.PACKET_CODEC.decode(delegate);
-            }
+            AnnuusRecipeEntries recipes = AnnuusRecipeEntries.decode(
+                    delegate
+            );
 
             return createData(recipes);
         } catch (Exception e) {
@@ -62,19 +62,13 @@ public record ShortRecipeSyncPayload(
         }
     }
 
-    // TODO
     private static void encode(RegistryByteBuf buf, ShortRecipeSyncPayload packet) {
         RegistryByteBuf delegate = new RegistryByteBuf(new PacketByteBuf(Unpooled.buffer()), buf.getRegistryManager());
 
-        int size = packet.recipes.length;
-
-        delegate.writeVarInt(size);
-
-        for (RecipeEntry<?> entry : packet.recipes) {
-            RecipeEntry.PACKET_CODEC.encode(delegate, entry);
-        }
-
-        delegate.writeVarInt(size);
+        AnnuusRecipeEntries.encode(
+                delegate,
+                packet.recipes
+        );
 
         AnnuusCompressUtil.doCompress(buf, delegate, () -> currentCompressor);
     }

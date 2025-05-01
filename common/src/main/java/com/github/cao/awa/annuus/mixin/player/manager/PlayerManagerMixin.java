@@ -11,7 +11,6 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.server.MinecraftServer;
@@ -48,23 +47,15 @@ public class PlayerManagerMixin {
     public void redirectSyncRecipes(ServerPlayNetworkHandler instance, Packet<?> packet, Operation<Void> original) {
         int annuusProtocolVersion = ((AnnuusVersionStorage) instance).getAnnuusVersion();
         if (Annuus.isServer && annuusProtocolVersion >= 4 && Annuus.CONFIG.isEnableShortRecipes()) {
-            if (packet instanceof SynchronizeRecipesS2CPacket source) {
-                RegistryByteBuf buf = new RegistryByteBuf(new PacketByteBuf(Unpooled.buffer()), this.server.getRegistryManager());
-                SynchronizeRecipesS2CPacket.CODEC.encode(buf, source);
-                LOGGER.info("Source recipes size: {} bytes", buf.writerIndex());
-
-                CustomPayloadS2CPacket shortRecipes = ShortRecipeSyncPayload.createPacket(
-                        this.server.getRecipeManager().sortedValues().toArray(RecipeEntry[]::new)
-                );
-
-                RegistryByteBuf buf2 = new RegistryByteBuf(new PacketByteBuf(Unpooled.buffer()), this.server.getRegistryManager());
-                CustomPayloadS2CPacket.PLAY_CODEC.encode(buf2, shortRecipes);
-                LOGGER.info("Short recipes size: {} bytes", buf.writerIndex());
-
+            if (packet instanceof SynchronizeRecipesS2CPacket) {
                 instance.sendPacket(
-                        shortRecipes
+                        ShortRecipeSyncPayload.createPacket(
+                                this.server.getRecipeManager().sortedValues().toArray(RecipeEntry[]::new)
+                        )
                 );
             }
+        } else {
+            original.call(instance, packet);
         }
     }
 }

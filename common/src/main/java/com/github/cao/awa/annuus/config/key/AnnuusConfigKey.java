@@ -32,8 +32,9 @@ public record AnnuusConfigKey<T>(String name, Consumer<T> callback, Class<T> typ
         return this;
     }
 
-    public T checkLimits(T value) {
+    public T onChangeCheck(T value) {
         if (this.limits.isEmpty() || this.limits.contains(value)) {
+            this.callback.accept(value);
             return value;
         }
         throw new IllegalStateException("Unexpected config value '" + value + "', the config '" + this.name + "' only allow these values: " + this.limits);
