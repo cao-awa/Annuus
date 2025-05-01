@@ -37,7 +37,7 @@ And chunk delta update blocks, every time collect 1229 blocks:
 
 ## Recipes synchronize
 
-|                         env/blocks |   1290   |   9587   |
+|                         env/recipes |   1290   |   9587   |
 |-----------------------------------:|:--------:|:--------:|
 |                            Vanilla | 105.73KB | 692.2KB  |
 | Replacement v1 <br/> (no_compress) |  94.4KB  | 612.86KB |
