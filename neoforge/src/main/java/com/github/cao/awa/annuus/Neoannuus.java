@@ -5,6 +5,10 @@ import com.github.cao.awa.annuus.command.AnnuusDebugCommand;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.*;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayloadHandler;
+import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
+import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayloadHandler;
+import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayload;
+import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayloadHandler;
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayload;
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayloadHandler;
 import com.mojang.brigadier.CommandDispatcher;
@@ -51,6 +55,10 @@ public class Neoannuus {
 
         registrar.playToServer(NoticeServerAnnuusPayload.IDENTIFIER, NoticeServerAnnuusPayload.CODEC, (payload, context) -> {
             NoticeServerAnnuusPayloadHandler.updateAnnuusVersionDuringPlay(payload, context.player());
+        });
+
+        registrar.playToClient(ShortRecipeSyncPayload.IDENTIFIER, ShortRecipeSyncPayload.CODEC, (payload, context) -> {
+            ShortRecipeSyncPayloadHandler.syncRecipesFromPayload(payload, MinecraftClient.getInstance(), (ClientPlayerEntity) context.player());
         });
 
         NeoForge.EVENT_BUS.register(this);

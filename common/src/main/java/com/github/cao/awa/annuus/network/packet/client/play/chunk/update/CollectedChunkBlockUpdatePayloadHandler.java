@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.network.packet.client.play.block.update;
+package com.github.cao.awa.annuus.network.packet.client.play.chunk.update;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;

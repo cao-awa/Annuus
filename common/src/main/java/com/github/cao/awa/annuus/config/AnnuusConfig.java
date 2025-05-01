@@ -7,8 +7,9 @@ import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.annuus.information.compressor.lz4.Lz4Compressor;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
-import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedChunkBlockUpdatePayload;
+import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
+import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayload;
 import com.github.cao.awa.sinuatum.manipulate.Manipulate;
 import com.github.cao.awa.sinuatum.util.collection.CollectionFactor;
 import com.github.cao.awa.sinuatum.util.io.IOUtil;
@@ -20,7 +21,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -81,19 +81,20 @@ public class AnnuusConfig {
             "best_compress",
             COMPRESS_OPTIONS
     );
+    public static final AnnuusConfigKey<Boolean> SHORT_RECIPES = AnnuusConfigKey.create(
+            "short_recipes",
+            true
+    );
+    public static final AnnuusConfigKey<String> SHORT_RECIPES_COMPRESS = AnnuusConfigKey.create(
+            "short_recipes",
+            (compressOption) -> ShortRecipeSyncPayload.setCurrentCompressor(COMPRESSOR_FETCHER.apply(compressOption)),
+            "best_compress"
+    );
 
     private final JSONObject config = new JSONObject();
 
     public boolean isEnableChunkCompress() {
         return !getConfig(CHUNK_COMPRESS).equals("no_compress");
-    }
-
-    public boolean isChunkBestCompress() {
-        return getConfig(CHUNK_COMPRESS).equals("best_compress");
-    }
-
-    public boolean isChunkBestSpeed() {
-        return getConfig(CHUNK_COMPRESS).equals("best_speed");
     }
 
     public String chunkCompress() {
@@ -104,16 +105,20 @@ public class AnnuusConfig {
         return !getConfig(BLOCK_UPDATES_COMPRESS).equals("no_compress");
     }
 
-    public boolean isBlockUpdatesBestCompress() {
-        return getConfig(BLOCK_UPDATES_COMPRESS).equals("best_compress");
-    }
-
-    public boolean isBlockUpdatesBestSpeed() {
-        return getConfig(BLOCK_UPDATES_COMPRESS).equals("best_speed");
-    }
-
     public String blockUpdatesCompress() {
         return getConfig(BLOCK_UPDATES_COMPRESS);
+    }
+
+    public boolean isEnableShortRecipes() {
+        return getConfig(SHORT_RECIPES);
+    }
+
+    public boolean isEnableShortRecipesCompress() {
+        return !getConfig(SHORT_RECIPES_COMPRESS).equals("no_compress");
+    }
+
+    public String ShortRecipesCompress() {
+        return getConfig(SHORT_RECIPES_COMPRESS);
     }
 
     public <X> void setConfig(AnnuusConfigKey<X> configKey, X value) {
@@ -189,6 +194,14 @@ public class AnnuusConfig {
 
         if (isEnableBlockUpdatesCompress()) {
             LOGGER.info("Annuus is enabled block updates compression");
+        }
+
+        if (isEnableShortRecipes()) {
+            LOGGER.info("Annuus is enabled short recipes synchronize");
+        }
+
+        if (isEnableShortRecipesCompress()) {
+            LOGGER.info("Annuus is enabled short recipes synchronize compression");
         }
     }
 
