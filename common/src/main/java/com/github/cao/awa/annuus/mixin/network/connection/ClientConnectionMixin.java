@@ -1,6 +1,7 @@
-package com.github.cao.awa.annuus.mixin.network;
+package com.github.cao.awa.annuus.mixin.network.connection;
 
 import com.github.cao.awa.annuus.Annuus;
+import com.github.cao.awa.annuus.mixin.network.ChunkDeltaUpdateS2CPacketAccessor;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedChunkBlockUpdatePayload;
 import com.github.cao.awa.annuus.update.ChunkBlockUpdateDetails;
@@ -13,7 +14,7 @@ import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket;
-import net.minecraft.server.network.*;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,9 +26,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Arrays;
 import java.util.Map;
 
-@Mixin(ServerCommonNetworkHandler.class)
-public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionStorage {
-    @Shadow @Final protected ClientConnection connection;
+@Mixin(ClientConnection.class)
+abstract public class ClientConnectionMixin implements AnnuusVersionStorage {
+    @Shadow protected abstract void sendImmediately(Packet<?> packet, @Nullable PacketCallbacks callbacks, boolean flush);
+
     @Unique
     private int annuusVersion = -1;
     @Unique
@@ -48,12 +50,12 @@ public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionSt
     }
 
     @Inject(
-            method = "sendPacket",
+            method = "send(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/PacketCallbacks;Z)V",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void collectBlockUpdate(Packet<?> packet, CallbackInfo ci) {
-        if (this.annuusVersion >= 3 && Annuus.CONFIG.isEnableBlockUpdatesCompress()) {
+    public void collectBlockUpdate(Packet<?> packet, PacketCallbacks callbacks, boolean flush, CallbackInfo ci) {
+        if (Annuus.isServer && this.annuusVersion >= 3 && Annuus.CONFIG.isEnableBlockUpdatesCompress()) {
             boolean shouldCancel = false;
 
             if (packet instanceof BlockUpdateS2CPacket blockUpdatePacket) {
@@ -83,22 +85,18 @@ public abstract class ServerCommonNetworkHandlerMixin implements AnnuusVersionSt
     }
 
     @Inject(
-            method = "baseTick",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/util/Util;getMeasuringTimeMs()J",
-                    shift = At.Shift.AFTER
-            )
+            method = "tick",
+            at = @At("HEAD")
     )
     public void sendCollectedBlockUpdates(CallbackInfo ci) {
         if (!this.updates.isEmpty()) {
-            this.connection.send(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.updates)));
+            sendImmediately(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.updates)), null, true);
 
             this.updates.clear();
         }
 
         if (!this.chunkUpdates.isEmpty()) {
-            this.connection.send(CollectedChunkBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.chunkUpdates)));
+            sendImmediately(CollectedChunkBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.chunkUpdates)), null, true);
 
             this.chunkUpdates.clear();
         }

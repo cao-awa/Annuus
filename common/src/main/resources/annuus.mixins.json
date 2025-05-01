@@ -8,9 +8,9 @@
     "chunk.sender.ChunkDataSenderMixin",
     "network.ChunkDeltaUpdateS2CPacketAccessor",
     "network.ChunkDeltaUpdateS2CPacketMixin",
-    "network.ServerCommonNetworkHandlerMixin",
     "network.ServerConfigurationNetworkHandlerMixin",
     "network.ServerPlayNetworkHandlerMixin",
+    "network.connection.ClientConnectionMixin",
     "player.ServerPlayerEntityMixin",
     "server.MinecraftServerMixin"
   ],

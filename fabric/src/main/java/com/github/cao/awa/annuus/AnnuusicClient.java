@@ -15,6 +15,8 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 public class AnnuusicClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        Annuus.isServer = false;
+
         ClientConfigurationConnectionEvents.START.register((handler, client) -> {
             ClientConfigurationNetworking.send(NoticeServerAnnuusPayload.createData());
         });
