@@ -2,10 +2,12 @@ package com.github.cao.awa.annuus;
 
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayloadHandler;
-import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedChunkBlockUpdatePayload;
-import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedChunkBlockUpdatePayloadHandler;
+import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
+import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayloadHandler;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayloadHandler;
+import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayload;
+import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayloadHandler;
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationConnectionEvents;
@@ -29,6 +31,10 @@ public class AnnuusicClient implements ClientModInitializer {
 
         ClientPlayNetworking.registerGlobalReceiver(CollectedChunkDataPayload.IDENTIFIER, (packet, context) -> {
             CollectedChunkDataPayloadHandler.loadChunksFromPayload(packet, context.client(), context.player());
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(ShortRecipeSyncPayload.IDENTIFIER, (packet, context) -> {
+            ShortRecipeSyncPayloadHandler.syncRecipesFromPayload(packet, context.client(), context.player());
         });
     }
 }

@@ -11,7 +11,10 @@
     "network.ServerCommonNetworkHandlerMixin",
     "network.ServerConfigurationNetworkHandlerMixin",
     "network.ServerPlayNetworkHandlerMixin",
+    "network.connection.ClientConnectionMixin",
     "player.ServerPlayerEntityMixin",
+    "player.manager.PlayerManagerMixin",
+    "registry.RegistryKeyAccessor",
     "server.MinecraftServerMixin"
   ],
   "client": [

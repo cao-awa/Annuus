@@ -10,11 +10,12 @@ import java.util.Set;
 public class Annuus {
     public static final Logger LOGGER = LogManager.getLogger("Annuus");
     public static final String VERSION = "1.0.9";
-    public static final int PROTOCOL_VERSION_ID = 3;
+    public static final int PROTOCOL_VERSION_ID = 4;
     public static final AnnuusConfig CONFIG = new AnnuusConfig();
     public static final AnnuusConfig PERSISTENT_CONFIG = new AnnuusConfig();
     public static Set<String> LOADED_MODS = CollectionFactor.hashSet();
     public static String loadingPlatform = "fabric";
+    public static boolean isServer = true;
     public static long processedChunks = 0;
     public static long processedBytes = 0;
     public static long processedBlockUpdates = 0;
