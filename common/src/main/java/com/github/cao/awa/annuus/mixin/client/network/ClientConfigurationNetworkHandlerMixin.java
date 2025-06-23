@@ -1,6 +1,7 @@
-package com.github.cao.awa.annuus.mixin.network;
+package com.github.cao.awa.annuus.mixin.client.network;
 
 import com.github.cao.awa.annuus.Annuus;
+import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
 import net.minecraft.client.network.ClientConfigurationNetworkHandler;
 import net.minecraft.network.packet.s2c.config.ReadyS2CPacket;
@@ -37,7 +38,7 @@ public class ClientConfigurationNetworkHandlerMixin implements AnnuusVersionStor
             )
     )
     public void onReady(ReadyS2CPacket packet, CallbackInfo ci) {
-        Annuus.processedBytes = 0;
-        Annuus.processedChunks = 0;
+        AnnuusDebugger.processedChunksBytes = 0;
+        AnnuusDebugger.processedChunks = 0;
     }
 }

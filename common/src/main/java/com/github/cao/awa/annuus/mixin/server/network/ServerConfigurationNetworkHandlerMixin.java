@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.mixin.network;
+package com.github.cao.awa.annuus.mixin.server.network;
 
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
@@ -35,10 +35,10 @@ public class ServerConfigurationNetworkHandlerMixin {
             LOGGER.info("Player {} joining server with Annuus protocol version {}", player.getName().getString(), versionStorage.getAnnuusVersion());
         }
 
-        if (Annuus.enableDebugs) {
-            Annuus.processedChunks = 0;
-            Annuus.calculatedTimes = 0;
-        }
+//        if (Annuus.enableDebugs) {
+//            Annuus.processedChunks = 0;
+//            Annuus.calculatedTimes = 0;
+//        }
 
         // Connect to server.
         original.call(instance, connection, player, clientData);

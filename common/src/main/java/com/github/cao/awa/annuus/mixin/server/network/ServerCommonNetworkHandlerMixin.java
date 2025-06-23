@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.mixin.network;
+package com.github.cao.awa.annuus.mixin.server.network;
 
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;

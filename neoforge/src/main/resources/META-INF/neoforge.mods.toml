@@ -12,6 +12,17 @@ description = '''
 Annuus is a mod for minecraft networking, improves network performance and makes the game more available for running on large server.
 '''
 #logoFile = ""
+[[mods]]
+modId = "annuus_client"
+version = "${version}"
+displayName = "AnnuusClient"
+authors = "cao_awa"
+
+[[mods]]
+modId = "annuus_server"
+version = "${version}"
+displayName = "AnnuusServer"
+authors = "cao_awa"
 
 [[dependencies.annuus]]
 modId = "neoforge"
@@ -29,3 +40,11 @@ side = "BOTH"
 
 [[mixins]]
 config = "annuus.mixins.json"
+
+[[dependencies.annuus_client]]
+modId = "annuus"
+type = "required"
+
+[[dependencies.annuus_server]]
+modId = "annuus"
+type = "required"

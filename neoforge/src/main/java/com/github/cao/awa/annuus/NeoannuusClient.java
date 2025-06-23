@@ -14,7 +14,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-@Mod(value = "annuus", dist = {Dist.CLIENT})
+@Mod(value = "annuus_client", dist = {Dist.CLIENT})
 public class NeoannuusClient {
     public NeoannuusClient(IEventBus eventBus) {
         Neoannuus.LOGGER.info("Loading annuus neoforge client");

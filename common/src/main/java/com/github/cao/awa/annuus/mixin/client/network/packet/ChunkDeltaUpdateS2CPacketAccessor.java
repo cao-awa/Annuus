@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.mixin.network;
+package com.github.cao.awa.annuus.mixin.client.network.packet;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket;

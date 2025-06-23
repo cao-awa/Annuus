@@ -1,18 +1,16 @@
-package com.github.cao.awa.annuus.mixin.player.manager;
+package com.github.cao.awa.annuus.mixin.server.player.manager;
 
 import com.github.cao.awa.annuus.Annuus;
+import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayload;
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.SynchronizeRecipesS2CPacket;
-import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.ServerRecipeManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ConnectedClientData;
@@ -25,13 +23,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
-    private static final Logger LOGGER = LogManager.getLogger("AnnuusRecipes");
-
     @Shadow
     @Final
     private MinecraftServer server;
@@ -45,19 +40,23 @@ public class PlayerManagerMixin {
             )
     )
     public void redirectSyncRecipes(ServerPlayNetworkHandler instance, Packet<?> packet, Operation<Void> original) {
-        int annuusProtocolVersion = ((AnnuusVersionStorage) instance).getAnnuusVersion();
-        if (Annuus.isServer && annuusProtocolVersion >= 4 && Annuus.CONFIG.isEnableShortRecipes()) {
-            if (packet instanceof SynchronizeRecipesS2CPacket source) {
-                RegistryByteBuf buf = new RegistryByteBuf(new PacketByteBuf(Unpooled.buffer()), this.server.getRegistryManager());
-                SynchronizeRecipesS2CPacket.CODEC.encode(buf, source);
-                LOGGER.info("Source recipes size: {} bytes", buf.readableBytes());
+        if (packet instanceof SynchronizeRecipesS2CPacket source) {
+            int annuusProtocolVersion = ((AnnuusVersionStorage) instance).getAnnuusVersion();
+            if (annuusProtocolVersion >= 4 && Annuus.CONFIG.isEnableShortRecipes()) {
+                ServerRecipeManager recipeManager = this.server.getRecipeManager();
 
-                instance.sendPacket(
-                        ShortRecipeSyncPayload.createPacket(
-                                this.server.getRecipeManager().getPropertySets(),
-                                this.server.getRecipeManager().getStonecutterRecipeForSync()
-                        )
+                ShortRecipeSyncPayload payload = ShortRecipeSyncPayload.createData(
+                        recipeManager.getPropertySets(),
+                        recipeManager.getStonecutterRecipeForSync()
                 );
+
+                CustomPayloadS2CPacket shortRecipeSyncPayloadPacket = ShortRecipeSyncPayload.createPacket(payload);
+
+                instance.sendPacket(shortRecipeSyncPayloadPacket);
+
+                if (AnnuusDebugger.enableDebugs) {
+                    ShortRecipeSyncPayload.testEncode(source, this.server.getRegistryManager(), payload);
+                }
             }
         } else {
             original.call(instance, packet);

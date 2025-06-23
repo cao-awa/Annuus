@@ -1,6 +1,7 @@
-package com.github.cao.awa.annuus.mixin.chunk.sender;
+package com.github.cao.awa.annuus.mixin.server.chunk.sender;
 
 import com.github.cao.awa.annuus.Annuus;
+import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -50,7 +51,7 @@ public class ChunkDataSenderMixin {
             // Send chunks using the collected packet.
             if (!list.isEmpty()) {
                 // Start sending.
-                ServerWorld world = this.player.getServerWorld();
+                ServerWorld world = this.player.getWorld();
                 ServerPlayNetworkHandler networkHandler = this.player.networkHandler;
                 this.unacknowledgedBatches++;
 
@@ -60,9 +61,9 @@ public class ChunkDataSenderMixin {
 
                 long start = System.nanoTime();
                 networkHandler.send(CollectedChunkDataPayload.createPacket(sendingChunks, world.getLightingProvider()), null);
-                if (Annuus.enableDebugs) {
-                    Annuus.calculatedTimes += (System.nanoTime() - start) / 1000000D;
-                    Annuus.processedChunks += sendingChunks.length;
+                if (AnnuusDebugger.enableDebugs) {
+                    AnnuusDebugger.chunkCalculatedTimes += (System.nanoTime() - start) / 1000000D;
+                    AnnuusDebugger.processedChunks += sendingChunks.length;
                 }
                 networkHandler.send(new ChunkSentS2CPacket(list.size()), null);
 
@@ -82,9 +83,9 @@ public class ChunkDataSenderMixin {
             at = @At("HEAD")
     )
     private static void startSendOneChunk(ServerPlayNetworkHandler handler, ServerWorld world, WorldChunk chunk, CallbackInfo ci) {
-        if (Annuus.enableDebugs) {
+        if (AnnuusDebugger.enableDebugs) {
             start = System.nanoTime();
-            Annuus.processedChunks++;
+            AnnuusDebugger.processedChunks++;
         }
     }
 
@@ -93,8 +94,8 @@ public class ChunkDataSenderMixin {
             at = @At("RETURN")
     )
     private static void doneSendOneChunk(ServerPlayNetworkHandler handler, ServerWorld world, WorldChunk chunk, CallbackInfo ci) {
-        if (Annuus.enableDebugs) {
-            Annuus.calculatedTimes += (System.nanoTime() - start) / 1000000D;
+        if (AnnuusDebugger.enableDebugs) {
+            AnnuusDebugger.chunkCalculatedTimes += (System.nanoTime() - start) / 1000000D;
         }
     }
 }

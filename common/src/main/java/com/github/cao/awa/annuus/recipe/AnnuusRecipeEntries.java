@@ -99,7 +99,6 @@ public class AnnuusRecipeEntries {
                 replacements,
                 propertySetMap,
                 stonecuttingRecipeGrouping
-
         );
     }
 

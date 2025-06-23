@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.mixin.player;
+package com.github.cao.awa.annuus.mixin.server.player;
 
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
 import net.minecraft.server.network.ServerPlayerEntity;

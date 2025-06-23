@@ -62,3 +62,9 @@ shadowJar {
 remapJar {
     inputFile.set shadowJar.archiveFile
 }
+
+loom {
+    mixin {
+        useLegacyMixinAp = true
+    }
+}

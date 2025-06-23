@@ -1,6 +1,7 @@
-package com.github.cao.awa.annuus.mixin.network;
+package com.github.cao.awa.annuus.mixin.client.network.packet;
 
 import com.github.cao.awa.annuus.Annuus;
+import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,8 +16,8 @@ public class ChunkDeltaUpdateS2CPacketMixin {
             at = @At("RETURN")
     )
     public void encode(PacketByteBuf buf, CallbackInfo ci) {
-        if (Annuus.enableDebugs) {
-            Annuus.vanillaBlockUpdateBytes += buf.readableBytes();
+        if (AnnuusDebugger.enableDebugs) {
+            AnnuusDebugger.vanillaBlockUpdateBytes += buf.readableBytes();
         }
     }
 }

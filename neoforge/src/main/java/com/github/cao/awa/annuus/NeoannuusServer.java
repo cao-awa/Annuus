@@ -15,7 +15,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-@Mod(value = "annuus", dist = {Dist.DEDICATED_SERVER})
+@Mod(value = "annuus_server", dist = {Dist.DEDICATED_SERVER})
 public class NeoannuusServer {
     public NeoannuusServer(IEventBus eventBus) {
         Neoannuus.LOGGER.info("Loading annuus neoforge server");
