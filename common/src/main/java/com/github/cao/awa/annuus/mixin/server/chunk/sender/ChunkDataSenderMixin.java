@@ -43,7 +43,10 @@ public class ChunkDataSenderMixin {
 
     @WrapOperation(
             method = "sendChunkBatches",
-            at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z")
+            at = @At(
+                    value = "INVOKE",
+                    target = "Ljava/util/List;isEmpty()Z"
+            )
     )
     public boolean sendChunkBatches(List<WorldChunk> list, Operation<Boolean> original) {
         // Only collect data when player installed annuus.

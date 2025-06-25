@@ -1,7 +1,7 @@
 package com.github.cao.awa.annuus.mixin.network.connection;
 
 import com.github.cao.awa.annuus.Annuus;
-import com.github.cao.awa.annuus.mixin.client.network.packet.ChunkDeltaUpdateS2CPacketAccessor;
+import com.github.cao.awa.annuus.mixin.network.packet.ChunkDeltaUpdateS2CPacketAccessor;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
 import com.github.cao.awa.annuus.update.ChunkBlockUpdateDetails;

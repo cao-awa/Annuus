@@ -1,6 +1,5 @@
-package com.github.cao.awa.annuus.mixin.client.network.packet;
+package com.github.cao.awa.annuus.mixin.network.packet;
 
-import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket;

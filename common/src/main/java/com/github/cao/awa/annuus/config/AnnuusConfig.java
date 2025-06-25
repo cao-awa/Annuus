@@ -89,6 +89,10 @@ public class AnnuusConfig {
             "short_recipes",
             true
     );
+    public static final AnnuusConfigKey<Boolean> ZIGZAG_VAR_INT = AnnuusConfigKey.create(
+            "zigzag_var_int",
+            true
+    );
     public static final AnnuusConfigKey<String> SHORT_RECIPES_COMPRESS = AnnuusConfigKey.create(
             "short_recipes_compress",
             (compressOption) -> ShortRecipeSyncPayload.setCurrentCompressor(COMPRESSOR_FETCHER.apply(compressOption)),

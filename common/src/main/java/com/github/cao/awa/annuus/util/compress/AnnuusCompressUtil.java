@@ -11,23 +11,23 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class AnnuusCompressUtil {
-    public static void doCompress(ByteBuf buf, ByteBuf delegate, Supplier<InformationCompressor> compressorSupplier) {
+    public static void doCompress(PacketByteBuf buf, PacketByteBuf delegate, Supplier<InformationCompressor> compressorSupplier) {
         byte[] bytes = new byte[delegate.readableBytes()];
 
         delegate.readBytes(bytes);
 
         InformationCompressor compressor = compressorSupplier.get();
-        buf.writeInt(compressor.getId());
+        buf.writeVarInt(compressor.getId());
 
         byte[] data = compressor.compress(bytes);
 
-        buf.writeInt(data.length);
+        buf.writeVarInt(data.length);
         buf.writeBytes(data);
     }
 
     public static PacketByteBuf doDecompress(PacketByteBuf buf) {
-        int compressorId = buf.readInt();
-        int packetSize = buf.readInt();
+        int compressorId = buf.readVarInt();
+        int packetSize = buf.readVarInt();
 
         byte[] data = new byte[packetSize];
 
@@ -35,7 +35,7 @@ public class AnnuusCompressUtil {
 
         data = InformationCompressors.getCompressor(compressorId).decompress(data);
 
-        return new PacketByteBuf(Unpooled.copiedBuffer(data));
+        return new PacketByteBuf(Unpooled.wrappedBuffer(data));
     }
 
     public static RegistryByteBuf doDecompressRegistryBuf(RegistryByteBuf buf) {
