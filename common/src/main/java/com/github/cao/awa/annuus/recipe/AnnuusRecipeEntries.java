@@ -23,7 +23,7 @@ public class AnnuusRecipeEntries {
 
         int replacementId = 0;
         for (RecipeEntry<?> entry : entries) {
-            Identifier identifier= entry.id();
+            Identifier identifier = entry.id();
             if (!replacements.containsKey(identifier.getNamespace())) {
                 replacements.put(identifier.getNamespace(), replacementId);
                 replacementId++;
@@ -57,7 +57,7 @@ public class AnnuusRecipeEntries {
 
         Map<String, Integer> replacements = CollectionFactor.hashMap();
 
-        for (int i = 0;i < replacementsSize; i++) {
+        for (int i = 0; i < replacementsSize; i++) {
             int replacementId = delegate.readVarInt();
             String replacement = delegate.readString();
             replacements.put(replacement, replacementId);
@@ -67,7 +67,7 @@ public class AnnuusRecipeEntries {
 
         AnnuusRecipeEntry[] recipeEntries = new AnnuusRecipeEntry[recipesSize];
 
-        for (int i = 0;i < recipesSize; i++) {
+        for (int i = 0; i < recipesSize; i++) {
             recipeEntries[i] = AnnuusRecipeEntry.decode(delegate);
         }
 
@@ -81,7 +81,7 @@ public class AnnuusRecipeEntries {
 
         this.replacements.forEach((key, id) -> reverseReplacements.put(id, key));
 
-        for (int i = 0;i < this.recipeEntries.length;i ++) {
+        for (int i = 0; i < this.recipeEntries.length; i++) {
             recipes[i] = this.recipeEntries[i].toVanilla(reverseReplacements);
         }
 

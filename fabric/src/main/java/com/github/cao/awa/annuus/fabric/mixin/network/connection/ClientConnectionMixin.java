@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.mixin.network.connection;
+package com.github.cao.awa.annuus.fabric.mixin.network.connection;
 
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.mixin.network.ChunkDeltaUpdateS2CPacketAccessor;

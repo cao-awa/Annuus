@@ -1,5 +1,6 @@
-package com.github.cao.awa.annuus;
+package com.github.cao.awa.annuus.neoforged;
 
+import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.command.AnnuusConfigCommand;
 import com.github.cao.awa.annuus.command.AnnuusDebugCommand;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.*;
@@ -11,26 +12,37 @@ import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSy
 import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayloadHandler;
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayload;
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayloadHandler;
+import com.github.cao.awa.apricot.util.collection.ApricotCollectionFactor;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
+import java.util.Set;
+
 @Mod("annuus")
 public class Neoannuus {
     public static final Logger LOGGER = LogManager.getLogger("Neoannuus");
 
     public Neoannuus(IEventBus eventBus) {
-        LOGGER.info("Loading annuus using neoforge bootstrap");
+        eventBus.addListener(FMLCommonSetupEvent.class, this::onCommonSetup);
 
+        NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, Neoannuus::registerCommand);
+    }
+
+    public void onCommonSetup(FMLCommonSetupEvent event) {
         Annuus.loadingPlatform = "neoforge";
 
         Annuus.onInitialize();
@@ -60,12 +72,9 @@ public class Neoannuus {
         registrar.playToClient(ShortRecipeSyncPayload.IDENTIFIER, ShortRecipeSyncPayload.CODEC, (payload, context) -> {
             ShortRecipeSyncPayloadHandler.syncRecipesFromPayload(payload, MinecraftClient.getInstance(), (ClientPlayerEntity) context.player());
         });
-
-        NeoForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
-    public void registerCommand(RegisterCommandsEvent event) {
+    public static void registerCommand(RegisterCommandsEvent event) {
         CommandDispatcher<ServerCommandSource> dispatcher = event.getDispatcher();
 
         Neoannuus.LOGGER.info("Registering annuus commands");

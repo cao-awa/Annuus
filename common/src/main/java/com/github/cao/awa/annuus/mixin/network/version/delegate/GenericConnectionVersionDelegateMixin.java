@@ -1,16 +1,15 @@
-package com.github.cao.awa.annuus.mixin.player;
+package com.github.cao.awa.annuus.mixin.network.version.delegate;
 
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.ClientConnection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(ServerPlayerEntity.class)
-public class ServerPlayerEntityMixin implements AnnuusVersionStorage {
+@Mixin(ClientConnection.class)
+abstract public class GenericConnectionVersionDelegateMixin implements AnnuusVersionStorage {
     @Unique
     private int annuusVersion = -1;
 
-    @Unique
     @Override
     public int annuus$getAnnuusVersion() {
         return this.annuusVersion;

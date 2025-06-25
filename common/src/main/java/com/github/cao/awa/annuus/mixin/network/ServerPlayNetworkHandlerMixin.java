@@ -31,7 +31,7 @@ abstract public class ServerPlayNetworkHandlerMixin extends ServerCommonNetworkH
         AnnuusVersionStorage versionStorage = ((AnnuusVersionStorage) this);
 
         // Setting annuus version.
-        versionStorage.setAnnuusVersion(((AnnuusVersionStorage) player).getAnnuusVersion());
+        versionStorage.setAnnuusVersion(((AnnuusVersionStorage) connection).getAnnuusVersion());
 
         if (versionStorage.getAnnuusVersion() > -1) {
             LOGGER.info("Player {} updating Annuus protocol version {}", player.getName().getString(), versionStorage.getAnnuusVersion());

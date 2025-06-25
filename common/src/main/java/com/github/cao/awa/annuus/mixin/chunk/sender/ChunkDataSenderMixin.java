@@ -5,9 +5,11 @@ import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.Collected
 import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.ChunkSentS2CPacket;
 import net.minecraft.network.packet.s2c.play.StartChunkSendS2CPacket;
 import net.minecraft.server.network.ChunkDataSender;
+import net.minecraft.server.network.ServerCommonNetworkHandler;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -45,13 +47,14 @@ public class ChunkDataSenderMixin {
             at = @At(value = "INVOKE", target = "Ljava/util/List;isEmpty()Z")
     )
     public boolean sendChunkBatches(List<WorldChunk> list, Operation<Boolean> original) {
+        ServerCommonNetworkHandler networkHandler = this.player.networkHandler;
+
         // Only collect data when player installed annuus.
-        if (Annuus.isServer && ((AnnuusVersionStorage) this.player).getAnnuusVersion() >= 3 && Annuus.CONFIG.isEnableChunkCompress()) {
+        if (Annuus.isServer && ((AnnuusVersionStorage) networkHandler).getAnnuusVersion() >= 3 && Annuus.CONFIG.isEnableChunkCompress()) {
             // Send chunks using the collected packet.
             if (!list.isEmpty()) {
                 // Start sending.
                 ServerWorld world = this.player.getServerWorld();
-                ServerPlayNetworkHandler networkHandler = this.player.networkHandler;
                 this.unacknowledgedBatches++;
 
                 // Collect chunks.

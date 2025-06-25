@@ -1,5 +1,6 @@
-package com.github.cao.awa.annuus;
+package com.github.cao.awa.annuus.neoforged;
 
+import com.github.cao.awa.annuus.Annuus;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;

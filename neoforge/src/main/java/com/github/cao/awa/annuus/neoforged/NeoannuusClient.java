@@ -1,9 +1,9 @@
-package com.github.cao.awa.annuus;
+package com.github.cao.awa.annuus.neoforged;
 
+import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayload;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -15,11 +15,10 @@ public class NeoannuusClient {
 
         Neoannuus.LOGGER.info("Loading annuus neoforge client");
 
-        NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.addListener(ClientPlayerNetworkEvent.LoggingIn.class, NeoannuusClient::sendAnnuusServerNotice);
     }
 
-    @SubscribeEvent
-    public void registerPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event) {
+    public static void sendAnnuusServerNotice(ClientPlayerNetworkEvent.LoggingIn event) {
         event.getConnection().send(NoticeServerAnnuusPayload.createPacket());
     }
 }
