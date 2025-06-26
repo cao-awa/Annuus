@@ -4,23 +4,18 @@
   "package": "com.github.cao.awa.annuus.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "network.connection.ClientConnectionMixin",
+    "network.configuration.ServerConfigurationNetworkHandlerMixin",
+    "network.handler.ServerCommonNetworkHandlerAccessor",
     "network.packet.ChunkDeltaUpdateS2CPacketAccessor",
     "network.packet.ChunkDeltaUpdateS2CPacketMixin",
     "registry.RegistryKeyAccessor",
-    "server.network.encoding.VarIntsMixin"
+    "server.MinecraftServerMixin",
+    "server.chunk.sender.ChunkDataSenderMixin"
   ],
   "client": [
     "client.network.ClientConfigurationNetworkHandlerMixin"
   ],
   "server": [
-    "server.MinecraftServerMixin",
-    "server.chunk.sender.ChunkDataSenderMixin",
-    "server.network.ServerCommonNetworkHandlerMixin",
-    "server.network.ServerConfigurationNetworkHandlerMixin",
-    "server.network.ServerPlayNetworkHandlerMixin",
-    "server.player.ServerPlayerEntityMixin",
-    "server.player.manager.PlayerManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

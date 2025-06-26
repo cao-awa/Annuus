@@ -1,7 +1,6 @@
-package com.github.cao.awa.annuus.mixin.server.network;
+package com.github.cao.awa.annuus.mixin.network.configuration;
 
-import com.github.cao.awa.annuus.Annuus;
-import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
+import com.github.cao.awa.annuus.server.AnnuusServer;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.network.ClientConnection;
@@ -26,13 +25,10 @@ public class ServerConfigurationNetworkHandlerMixin {
             )
     )
     public void onReady(PlayerManager instance, ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, Operation<Void> original) {
-        AnnuusVersionStorage versionStorage = ((AnnuusVersionStorage) this);
+        int annuusVersion = AnnuusServer.getAnnuusVersion(connection);
 
-        // Setting annuus version.
-        ((AnnuusVersionStorage) player).setAnnuusVersion(versionStorage.getAnnuusVersion());
-
-        if (versionStorage.getAnnuusVersion() > -1) {
-            LOGGER.info("Player {} joining server with Annuus protocol version {}", player.getName().getString(), versionStorage.getAnnuusVersion());
+        if (annuusVersion > -1) {
+            LOGGER.info("Player {} joining server with Annuus protocol version {}", player.getName().getString(), annuusVersion);
         }
 
 //        if (Annuus.enableDebugs) {

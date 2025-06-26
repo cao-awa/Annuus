@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.cao.awa.annuus.neoforged.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "network.connection.ClientConnectionMixin",
+    "player.manager.PlayerManagerMixin"
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

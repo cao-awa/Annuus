@@ -16,21 +16,22 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.github.cao.awa.annuus.Annuusic"
+      "com.github.cao.awa.annuus.fabric.Annuusic"
     ],
     "client": [
-      "com.github.cao.awa.annuus.AnnuusicClient"
+      "com.github.cao.awa.annuus.fabric.AnnuusicClient"
     ],
     "server": [
-      "com.github.cao.awa.annuus.AnnuusicServer"
+      "com.github.cao.awa.annuus.fabric.AnnuusicServer"
     ]
   },
   "mixins": [
-    "annuus.mixins.json"
+    "annuus.mixins.json",
+    "annuus-fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": "*",
-    "minecraft": "1.21.x",
+    "minecraft": "1.21.6",
     "fabric": "*"
   }
 }

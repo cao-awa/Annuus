@@ -34,12 +34,12 @@ side = "BOTH"
 [[dependencies.annuus]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.1,)"
+versionRange = "[1.21.6,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[mixins]]
-config = "annuus.mixins.json"
+config = ["annuus.mixins.json", "annuus-neoforged.mixins.json"]
 
 [[dependencies.annuus_client]]
 modId = "annuus"

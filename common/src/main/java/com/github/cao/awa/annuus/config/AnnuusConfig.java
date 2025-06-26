@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -212,7 +213,7 @@ public class AnnuusConfig {
         }
 
         if (isEnableShortRecipes()) {
-            LOGGER.info("Annuus is enabled short recipes synchronize (replacement v2)");
+            LOGGER.info("Annuus is enabled short recipes synchronize (replacement v1)");
         }
 
         if (isEnableShortRecipesCompress()) {

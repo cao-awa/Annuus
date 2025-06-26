@@ -3,7 +3,7 @@ package com.github.cao.awa.annuus.mixin.server.chunk.sender;
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
-import com.github.cao.awa.annuus.version.AnnuusVersionStorage;
+import com.github.cao.awa.annuus.server.AnnuusServer;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.network.packet.s2c.play.ChunkSentS2CPacket;
@@ -50,7 +50,7 @@ public class ChunkDataSenderMixin {
     )
     public boolean sendChunkBatches(List<WorldChunk> list, Operation<Boolean> original) {
         // Only collect data when player installed annuus.
-        if (Annuus.isServer && ((AnnuusVersionStorage) this.player).getAnnuusVersion() >= 3 && Annuus.CONFIG.isEnableChunkCompress()) {
+        if (Annuus.isServer && AnnuusServer.getAnnuusVersion(this.player) >= 3 && Annuus.CONFIG.isEnableChunkCompress()) {
             // Send chunks using the collected packet.
             if (!list.isEmpty()) {
                 // Start sending.
