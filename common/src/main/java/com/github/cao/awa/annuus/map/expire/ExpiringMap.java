@@ -239,7 +239,7 @@ public class ExpiringMap<K, V> implements ConcurrentMap<K, V> {
                 ExpirationListener<? super K1, ? super V1> listener) {
             Assert.notNull(listener, "listener");
             if (expirationListeners == null)
-                expirationListeners = new ArrayList<ExpirationListener<K, V>>();
+                expirationListeners = new ArrayList<>();
             expirationListeners.add((ExpirationListener<K, V>) listener);
             return (Builder<K1, V1>) this;
         }
@@ -291,7 +291,7 @@ public class ExpiringMap<K, V> implements ConcurrentMap<K, V> {
                 List<ExpirationListener<? super K1, ? super V1>> listeners) {
             Assert.notNull(listeners, "listeners");
             if (asyncExpirationListeners == null)
-                asyncExpirationListeners = new ArrayList<ExpirationListener<K, V>>(listeners.size());
+                asyncExpirationListeners = new ArrayList<>(listeners.size());
             for (ExpirationListener<? super K1, ? super V1> listener : listeners)
                 asyncExpirationListeners.add((ExpirationListener<K, V>) listener);
             return (Builder<K1, V1>) this;
@@ -948,7 +948,7 @@ public class ExpiringMap<K, V> implements ConcurrentMap<K, V> {
      */
     @Override
     public Set<K> keySet() {
-        return new AbstractSet<K>() {
+        return new AbstractSet<>() {
             @Override
             public void clear() {
                 ExpiringMap.this.clear();
