@@ -2,6 +2,8 @@ package com.github.cao.awa.annuus.config.key;
 
 import com.github.cao.awa.apricot.util.collection.ApricotCollectionFactor;
 import com.github.cao.awa.sinuatum.manipulate.Manipulate;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 
 import java.util.Collection;
 import java.util.List;
@@ -9,7 +11,8 @@ import java.util.function.Consumer;
 
 public record AnnuusConfigKey<T>(String name, Consumer<T> callback, Class<T> type, T defaultValue, List<T> limits) {
     public static <X> AnnuusConfigKey<X> create(String name, X defaultValue) {
-        return new AnnuusConfigKey<>(name, (x) -> {}, Manipulate.cast(defaultValue.getClass()), defaultValue, ApricotCollectionFactor.arrayList());
+        return new AnnuusConfigKey<>(name, (x) -> {
+        }, Manipulate.cast(defaultValue.getClass()), defaultValue, ApricotCollectionFactor.arrayList());
     }
 
     public static <X> AnnuusConfigKey<X> create(String name, Consumer<X> callback, X defaultValue) {
@@ -32,10 +35,20 @@ public record AnnuusConfigKey<T>(String name, Consumer<T> callback, Class<T> typ
         return this;
     }
 
-    public T onChangeCheck(T value) {
+    public JsonElement onChangeCheck(T value) {
         if (this.limits.isEmpty() || this.limits.contains(value)) {
             this.callback.accept(value);
-            return value;
+
+            if (value instanceof String string) {
+                return new JsonPrimitive(string);
+            } else if (value instanceof Boolean bool) {
+                return new JsonPrimitive(bool);
+            } else if (value instanceof Integer integer) {
+                return new JsonPrimitive(integer);
+            } else if (value instanceof Character character) {
+                return new JsonPrimitive(character);
+            }
+            throw new IllegalStateException("Unexpected value type: " + value.getClass() + ", annuus only supported to [String, Boolean, Integer, Character, ]");
         }
         throw new IllegalStateException("Unexpected config value '" + value + "', the config '" + this.name + "' only allow these values: " + this.limits);
     }

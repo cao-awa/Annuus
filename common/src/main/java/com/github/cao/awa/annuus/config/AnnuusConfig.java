@@ -1,7 +1,5 @@
 package com.github.cao.awa.annuus.config;
 
-import com.alibaba.fastjson2.JSONObject;
-import com.alibaba.fastjson2.JSONWriter;
 import com.github.cao.awa.annuus.config.key.AnnuusConfigKey;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
@@ -14,12 +12,15 @@ import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSy
 import com.github.cao.awa.sinuatum.manipulate.Manipulate;
 import com.github.cao.awa.sinuatum.util.collection.CollectionFactor;
 import com.github.cao.awa.sinuatum.util.io.IOUtil;
+import com.google.gson.JsonObject;
+import net.minecraft.util.JsonHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
@@ -104,7 +105,7 @@ public class AnnuusConfig {
             COMPRESS_OPTIONS
     );
 
-    private final JSONObject config = new JSONObject();
+    private final JsonObject config = new JsonObject();
 
     public boolean isEnableChunkCompress() {
         return !getConfig(CHUNK_COMPRESS).equals("no_compress");
@@ -135,10 +136,10 @@ public class AnnuusConfig {
     }
 
     public <X> void setConfig(AnnuusConfigKey<X> configKey, X value) {
-        this.config.put(configKey.name(), configKey.onChangeCheck(check(configKey, value)));
+        this.config.add(configKey.name(), configKey.onChangeCheck(check(configKey, value)));
     }
 
-    public <X> void setConfig(AnnuusConfigKey<X> configKey, JSONObject json) {
+    public <X> void setConfig(AnnuusConfigKey<X> configKey, JsonObject json) {
         setConfig(configKey, check(configKey, json.get(configKey.name())));
     }
 
@@ -165,14 +166,16 @@ public class AnnuusConfig {
         loadAsDefault();
 
         try {
-            final JSONObject config = JSONObject.parse(IOUtil.read(new FileReader(CONFIG_FILE, StandardCharsets.UTF_8)));
+            final JsonObject config = JsonHelper.deserialize(IOUtil.read(new FileReader(CONFIG_FILE, StandardCharsets.UTF_8)));
 
             setConfig(CHUNK_COMPRESS, config);
             setConfig(BLOCK_UPDATES_COMPRESS, config);
             setConfig(SHORT_RECIPES, config);
             setConfig(SHORT_RECIPES_COMPRESS, config);
+        } catch (FileNotFoundException e) {
+            LOGGER.warn("Config not found, will use default config values");
         } catch (Exception e) {
-            LOGGER.warn("Config not found, use default values", e);
+            LOGGER.warn("Happening unexpected exception, config system cannot resolve it, will use default config values", e);
         }
 
         write();
@@ -185,7 +188,7 @@ public class AnnuusConfig {
             }
             IOUtil.write(
                     new FileWriter(CONFIG_FILE, StandardCharsets.UTF_8),
-                    this.config.toString(JSONWriter.Feature.PrettyFormat)
+                    this.config.toString()
             );
         } catch (Exception e) {
             LOGGER.warn("Failed to save config", e);
@@ -208,11 +211,11 @@ public class AnnuusConfig {
 
     public void print() {
         if (isEnableChunkCompress()) {
-            LOGGER.info("Annuus is enabled chunk compression: " + chunkCompress());
+            LOGGER.info("Annuus is enabled chunk compression: {}", chunkCompress());
         }
 
         if (isEnableBlockUpdatesCompress()) {
-            LOGGER.info("Annuus is enabled block updates compression: " + blockUpdatesCompress());
+            LOGGER.info("Annuus is enabled block updates compression: {}", blockUpdatesCompress());
         }
 
         if (isEnableShortRecipes()) {
@@ -220,7 +223,7 @@ public class AnnuusConfig {
         }
 
         if (isEnableShortRecipesCompress()) {
-            LOGGER.info("Annuus is enabled short recipes synchronize compression: " + shortRecipesCompress());
+            LOGGER.info("Annuus is enabled short recipes synchronize compression: {}", shortRecipesCompress());
         }
     }
 
