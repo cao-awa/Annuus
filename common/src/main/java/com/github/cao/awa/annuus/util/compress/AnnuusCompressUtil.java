@@ -2,12 +2,10 @@ package com.github.cao.awa.annuus.util.compress;
 
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressors;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class AnnuusCompressUtil {
@@ -25,7 +23,7 @@ public class AnnuusCompressUtil {
         buf.writeBytes(data);
     }
 
-    public static PacketByteBuf doDecompress(PacketByteBuf buf) {
+    public static PacketByteBuf decompress(PacketByteBuf buf) {
         int compressorId = buf.readVarInt();
         int packetSize = buf.readVarInt();
 
@@ -38,7 +36,7 @@ public class AnnuusCompressUtil {
         return new PacketByteBuf(Unpooled.wrappedBuffer(data));
     }
 
-    public static RegistryByteBuf doDecompressRegistryBuf(RegistryByteBuf buf) {
-        return new RegistryByteBuf(doDecompress(buf), buf.getRegistryManager());
+    public static RegistryByteBuf decompressRegistryBuf(RegistryByteBuf buf) {
+        return new RegistryByteBuf(decompress(buf), buf.getRegistryManager());
     }
 }

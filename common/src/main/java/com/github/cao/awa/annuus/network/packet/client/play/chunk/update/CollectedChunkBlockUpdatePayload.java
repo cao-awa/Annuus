@@ -70,7 +70,7 @@ public record CollectedChunkBlockUpdatePayload(
 
     private static CollectedChunkBlockUpdatePayload decode(PacketByteBuf buf) {
         try {
-            PacketByteBuf delegate = AnnuusCompressUtil.doDecompress(buf);
+            PacketByteBuf delegate = AnnuusCompressUtil.decompress(buf);
 
             int chunks = delegate.readVarInt();
 

@@ -19,6 +19,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.chunk.light.LightingProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -28,6 +30,7 @@ public record CollectedChunkDataPayload(
         List<ChunkData> chunkData,
         List<LightData> lightData
 ) implements CustomPayload {
+    private static final Logger LOGGER = LogManager.getLogger("AnnuusCollectdChunkDataPayload");
     public static final Id<CollectedChunkDataPayload> IDENTIFIER = new Id<>(Identifier.of("annuus:collected_chunk"));
     public static final PacketCodec<RegistryByteBuf, CollectedChunkDataPayload> CODEC = PacketCodec.ofStatic(
             CollectedChunkDataPayload::encode,
@@ -68,7 +71,7 @@ public record CollectedChunkDataPayload(
 
     private static CollectedChunkDataPayload decode(RegistryByteBuf buf) {
         try {
-            RegistryByteBuf delegate = AnnuusCompressUtil.doDecompressRegistryBuf(buf);
+            RegistryByteBuf delegate = AnnuusCompressUtil.decompressRegistryBuf(buf);
 
             int size = delegate.readVarInt();
 
@@ -102,7 +105,7 @@ public record CollectedChunkDataPayload(
 
             return new CollectedChunkDataPayload(xPositions, zPositions, chunkDataList, lightDataList);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e);
             throw e;
         }
     }

@@ -67,7 +67,7 @@ public record ShortRecipeSyncPayload(
     @TestOnly
     public static ShortRecipeSyncPayload decode(RegistryByteBuf buf) {
         try {
-            RegistryByteBuf delegate = AnnuusCompressUtil.doDecompressRegistryBuf(buf);
+            RegistryByteBuf delegate = AnnuusCompressUtil.decompressRegistryBuf(buf);
 
             AnnuusRecipeEntries recipes = AnnuusRecipeEntries.decode(
                     delegate

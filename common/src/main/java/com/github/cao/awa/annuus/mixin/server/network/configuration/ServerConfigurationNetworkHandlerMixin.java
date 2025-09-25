@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.mixin.network.configuration;
+package com.github.cao.awa.annuus.mixin.server.network.configuration;
 
 import com.github.cao.awa.annuus.server.AnnuusServer;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

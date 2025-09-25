@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -46,6 +45,10 @@ public class AnnuusConfig {
             "lz4"
     );
     private static final Function<String, InformationCompressor> COMPRESSOR_FETCHER = (compressOption) -> {
+        if (compressOption == null) {
+            return DeflateCompressor.BEST_INSTANCE;
+        }
+
         if (compressOption.startsWith("deflate_")) {
             return switch (compressOption.replace("deflate_", "")) {
                 case "1" -> DeflateCompressor.FASTEST_INSTANCE;
@@ -61,7 +64,7 @@ public class AnnuusConfig {
             };
         } else if (compressOption.equals("lz4")) {
             return Lz4Compressor.INSTANCE;
-        } else if (compressOption.equals("no_compress")) {
+        } else if (compressOption.equals("no_compress") || compressOption.equals("inaction")) {
             return InactionCompressor.INSTANCE;
         }
 

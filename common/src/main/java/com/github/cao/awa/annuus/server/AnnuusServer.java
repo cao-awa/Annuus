@@ -1,6 +1,6 @@
 package com.github.cao.awa.annuus.server;
 
-import com.github.cao.awa.annuus.mixin.network.handler.ServerCommonNetworkHandlerAccessor;
+import com.github.cao.awa.annuus.mixin.server.network.handler.ServerCommonNetworkHandlerAccessor;
 import com.github.cao.awa.annuus.version.storage.AnnuusVersionStorageMap;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;

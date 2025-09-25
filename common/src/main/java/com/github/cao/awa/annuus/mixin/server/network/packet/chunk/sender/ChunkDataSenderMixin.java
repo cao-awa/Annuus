@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.mixin.server.chunk.sender;
+package com.github.cao.awa.annuus.mixin.server.network.packet.chunk.sender;
 
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.debug.AnnuusDebugger;

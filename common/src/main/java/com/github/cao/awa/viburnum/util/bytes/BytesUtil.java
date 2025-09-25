@@ -24,10 +24,10 @@ public class BytesUtil {
             }
             byte[] result = new byte[bytes.length - i];
             System.arraycopy(bytes,
-                             i,
-                             result,
-                             0,
-                             result.length
+                    i,
+                    result,
+                    0,
+                    result.length
             );
             return result;
         }
@@ -37,8 +37,8 @@ public class BytesUtil {
 
     public static void skd(byte[] bytes, byte target) {
         skd(bytes,
-            target,
-            (byte) 0
+                target,
+                (byte) 0
         );
     }
 
@@ -69,10 +69,10 @@ public class BytesUtil {
                 continue;
             }
             System.arraycopy(array,
-                             0,
-                             result,
-                             cur,
-                             array.length
+                    0,
+                    result,
+                    cur,
+                    array.length
             );
             cur += array.length;
         }

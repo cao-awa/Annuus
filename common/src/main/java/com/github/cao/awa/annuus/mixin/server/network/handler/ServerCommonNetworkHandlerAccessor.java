@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.mixin.network.handler;
+package com.github.cao.awa.annuus.mixin.server.network.handler;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.network.ServerCommonNetworkHandler;
