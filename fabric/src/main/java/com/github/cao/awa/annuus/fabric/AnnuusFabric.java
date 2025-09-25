@@ -15,7 +15,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Annuusic implements ModInitializer {
+public class AnnuusFabric implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("Annuusic");
 
     @Override
@@ -34,7 +34,7 @@ public class Annuusic implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(NoticeServerAnnuusPayload.IDENTIFIER, NoticeServerAnnuusPayload.CODEC);
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-            Annuusic.LOGGER.info("Registering commands");
+            AnnuusFabric.LOGGER.info("Registering commands");
             AnnuusDebugCommand.register(server);
             AnnuusConfigCommand.register(server);
         });

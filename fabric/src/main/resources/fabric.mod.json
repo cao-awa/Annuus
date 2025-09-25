@@ -16,13 +16,13 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.github.cao.awa.annuus.fabric.Annuusic"
+      "com.github.cao.awa.annuus.fabric.AnnuusFabric"
     ],
     "client": [
-      "com.github.cao.awa.annuus.fabric.AnnuusicClient"
+      "com.github.cao.awa.annuus.fabric.AnnuusFabricClient"
     ],
     "server": [
-      "com.github.cao.awa.annuus.fabric.AnnuusicServer"
+      "com.github.cao.awa.annuus.fabric.AnnuusFabricServer"
     ]
   },
   "mixins": [

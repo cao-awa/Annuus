@@ -11,14 +11,10 @@ import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSy
 import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayloadHandler;
 import com.github.cao.awa.annuus.network.packet.client.update.NoticeUpdateServerAnnuusPayload;
 import com.github.cao.awa.annuus.network.packet.client.update.NoticeUpdateServerAnnuusPayloadHandler;
-import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayload;
-import com.github.cao.awa.annuus.version.AnnuusVersion;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationConnectionEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
-public class AnnuusicClient implements ClientModInitializer {
+public class AnnuusFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Annuus.isServer = false;

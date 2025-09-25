@@ -29,13 +29,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod("annuus")
-public class Neoannuus {
+public class AnnuusNeoForged {
     public static final Logger LOGGER = LogManager.getLogger("Neoannuus");
 
-    public Neoannuus(IEventBus eventBus) {
-        eventBus.addListener(FMLCommonSetupEvent.class, Neoannuus::onCommonSetup);
+    public AnnuusNeoForged(IEventBus eventBus) {
+        eventBus.addListener(FMLCommonSetupEvent.class, AnnuusNeoForged::onCommonSetup);
 
-        NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, Neoannuus::registerCommand);
+        NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, AnnuusNeoForged::registerCommand);
     }
 
     public static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -78,7 +78,7 @@ public class Neoannuus {
     public static void registerCommand(RegisterCommandsEvent event) {
         CommandDispatcher<ServerCommandSource> dispatcher = event.getDispatcher();
 
-        Neoannuus.LOGGER.info("Registering annuus commands");
+        AnnuusNeoForged.LOGGER.info("Registering annuus commands");
         AnnuusDebugCommand.register(dispatcher);
         AnnuusConfigCommand.register(dispatcher);
     }

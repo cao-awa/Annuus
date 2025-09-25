@@ -6,7 +6,7 @@ import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuus
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
-public class AnnuusicServer implements DedicatedServerModInitializer {
+public class AnnuusFabricServer implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         Annuus.isServer = true;
