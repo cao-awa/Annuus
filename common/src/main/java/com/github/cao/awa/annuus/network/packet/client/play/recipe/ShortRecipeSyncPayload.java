@@ -63,8 +63,6 @@ public record ShortRecipeSyncPayload(
         return new ShortRecipeSyncPayload(recipes);
     }
 
-    // TODO
-    @TestOnly
     public static ShortRecipeSyncPayload decode(RegistryByteBuf buf) {
         try {
             RegistryByteBuf delegate = AnnuusCompressUtil.decompressRegistryBuf(buf);
@@ -80,8 +78,6 @@ public record ShortRecipeSyncPayload(
         }
     }
 
-    // TODO
-    @TestOnly
     public static void encode(RegistryByteBuf buf, ShortRecipeSyncPayload packet) {
         RegistryByteBuf delegate = new RegistryByteBuf(new PacketByteBuf(Unpooled.buffer()), buf.getRegistryManager());
 
@@ -91,12 +87,12 @@ public record ShortRecipeSyncPayload(
         );
 
         if (AnnuusDebugger.enableDebugs) {
-            LOGGER.info("[Debug] Delegate size: " + delegate.readableBytes() + " by " + currentCompressor);
+            LOGGER.info("[Debug] Delegate size: {} by {}", delegate.readableBytes(), currentCompressor);
         }
         AnnuusCompressUtil.doCompress(buf, delegate, () -> currentCompressor);
 
         if (AnnuusDebugger.enableDebugs) {
-            LOGGER.info("[Debug] Short recipes size: " + buf.readableBytes() + " bytes");
+            LOGGER.info("[Debug] Short recipes size: {} bytes", buf.readableBytes());
         }
     }
 

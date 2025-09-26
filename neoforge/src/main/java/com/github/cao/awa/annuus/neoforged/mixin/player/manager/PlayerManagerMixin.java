@@ -61,11 +61,31 @@ public class PlayerManagerMixin {
         } else {
             original.call(instance, packet);
         }
+//        int annuusProtocolVersion = AnnuusServer.getAnnuusVersion(instance);
+//        boolean canUseShortRecipes = annuusProtocolVersion >= 4 && Annuus.CONFIG.isEnableShortRecipes();
+//        if (packet instanceof SynchronizeRecipesS2CPacket source && canUseShortRecipes) {
+//            ServerRecipeManager recipeManager = this.server.getRecipeManager();
+//
+//            ShortRecipeSyncPayload payload = ShortRecipeSyncPayload.createData(
+//                    recipeManager.getPropertySets(),
+//                    recipeManager.getStonecutterRecipeForSync()
+//            );
+//
+//            CustomPayloadS2CPacket shortRecipeSyncPayloadPacket = ShortRecipeSyncPayload.createPacket(payload);
+//
+//            instance.send(shortRecipeSyncPayloadPacket);
+//
+//            if (AnnuusDebugger.enableDebugs) {
+//                ShortRecipeSyncPayload.testEncode(source, this.server.getRegistryManager(), payload);
+//            }
+//        } else {
+//            original.call(instance, packet);
+//        }
     }
 
     @Inject(
             method = "onPlayerConnect",
-            at = @At("RETURN")
+            at = @At("HEAD")
     )
     public void requireClientAnnuusVersion(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         connection.send(NoticeUpdateServerAnnuusPayload.createPacket());

@@ -7,24 +7,24 @@ import net.minecraft.server.network.ServerCommonNetworkHandler;
 
 import java.util.concurrent.TimeUnit;
 
-public class AnnuusVersionStorageMap {
-    private final ExpiringMap<Object, Integer> versions = ExpiringMap.createFrom(
-                    Object.class,
+public class AnnuusVersionStorage {
+    private final ExpiringMap<ClientConnection, Integer> versions = ExpiringMap.createFrom(
+                    ClientConnection.class,
                     Integer.class
             )
             .enableExpiration()
             .setExpiration(2, TimeUnit.HOURS)
-            .whenExpiration(((key, value) -> {
-                if (key instanceof ClientConnection connection && connection.isOpen()) {
+            .whenExpiration(((connection, value) -> {
+                if (connection.isOpen()) {
                     noticeUpdateAnnuusVersion(connection);
                 }
             }));
 
-    public int getAnnuusVersion(Object target) {
+    public int getAnnuusVersion(ClientConnection target) {
         return this.versions.getOrDefault(target, -1);
     }
 
-    public int setAnnuusVersion(Object target, int version) {
+    public int setAnnuusVersion(ClientConnection target, int version) {
         this.versions.put(target, version);
 
         return version;
