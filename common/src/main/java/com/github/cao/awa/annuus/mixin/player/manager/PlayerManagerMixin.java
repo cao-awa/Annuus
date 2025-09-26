@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.fabric.mixin.player.manager;
+package com.github.cao.awa.annuus.mixin.player.manager;
 
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.debug.AnnuusDebugger;
@@ -39,22 +39,22 @@ public class PlayerManagerMixin {
             )
     )
     public void redirectSyncRecipes(ServerPlayNetworkHandler instance, Packet<?> packet, Operation<Void> original) {
-        if (packet instanceof SynchronizeRecipesS2CPacket source) {
-            if (AnnuusServer.getAnnuusVersion(instance) >= 4 && Annuus.CONFIG.isEnableShortRecipes()) {
-                ServerRecipeManager recipeManager = this.server.getRecipeManager();
+        int annuusProtocolVersion = AnnuusServer.getAnnuusVersion(instance);
+        boolean canUseShortRecipes = annuusProtocolVersion >= 4 && Annuus.CONFIG.isEnableShortRecipes();
+        if (packet instanceof SynchronizeRecipesS2CPacket source && canUseShortRecipes) {
+            ServerRecipeManager recipeManager = this.server.getRecipeManager();
 
-                ShortRecipeSyncPayload payload = ShortRecipeSyncPayload.createData(
-                        recipeManager.getPropertySets(),
-                        recipeManager.getStonecutterRecipeForSync()
-                );
+            ShortRecipeSyncPayload payload = ShortRecipeSyncPayload.createData(
+                    recipeManager.getPropertySets(),
+                    recipeManager.getStonecutterRecipeForSync()
+            );
 
-                CustomPayloadS2CPacket shortRecipeSyncPayloadPacket = ShortRecipeSyncPayload.createPacket(payload);
+            CustomPayloadS2CPacket shortRecipeSyncPayloadPacket = ShortRecipeSyncPayload.createPacket(payload);
 
-                instance.sendPacket(shortRecipeSyncPayloadPacket);
+            instance.sendPacket(shortRecipeSyncPayloadPacket);
 
-                if (AnnuusDebugger.enableDebugs) {
-                    ShortRecipeSyncPayload.testEncode(source, this.server.getRegistryManager(), payload);
-                }
+            if (AnnuusDebugger.enableDebugs) {
+                ShortRecipeSyncPayload.testEncode(source, this.server.getRegistryManager(), payload);
             }
         } else {
             original.call(instance, packet);
@@ -63,9 +63,15 @@ public class PlayerManagerMixin {
 
     @Inject(
             method = "onPlayerConnect",
-            at = @At("RETURN")
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V",
+                    ordinal = 0,
+                    shift = At.Shift.AFTER
+            )
     )
     public void requireClientAnnuusVersion(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         connection.send(NoticeUpdateServerAnnuusPayload.createPacket());
     }
 }
+

@@ -30,7 +30,7 @@ import org.apache.logging.log4j.Logger;
 
 @Mod("annuus")
 public class AnnuusNeoForged {
-    public static final Logger LOGGER = LogManager.getLogger("Neoannuus");
+    public static final Logger LOGGER = LogManager.getLogger("AnnuusNeoForged");
 
     public AnnuusNeoForged(IEventBus eventBus) {
         eventBus.addListener(FMLCommonSetupEvent.class, AnnuusNeoForged::onCommonSetup);
@@ -42,6 +42,13 @@ public class AnnuusNeoForged {
         Annuus.loadingPlatform = "neoforge";
 
         Annuus.onInitialize();
+
+        // On dedicated and integrated server all need this.
+        PayloadRegistrar payloadRegistrar = new PayloadRegistrar("1");
+
+        payloadRegistrar.playToServer(NoticeServerAnnuusPayload.IDENTIFIER, NoticeServerAnnuusPayload.CODEC, (payload, context) -> {
+            NoticeServerAnnuusPayloadHandler.updateAnnuusVersionDuringPlay(payload, (ServerPlayerEntity) context.player());
+        });
     }
 
     public static void registerCommand(RegisterCommandsEvent event) {

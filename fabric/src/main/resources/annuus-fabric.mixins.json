@@ -4,8 +4,6 @@
   "package": "com.github.cao.awa.annuus.fabric.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "network.connection.ClientConnectionMixin",
-    "player.manager.PlayerManagerMixin"
   ],
   "client": [
   ],

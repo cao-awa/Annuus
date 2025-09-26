@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.fabric.mixin.network.connection;
+package com.github.cao.awa.annuus.mixin.network.connection;
 
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.mixin.server.network.packet.chunk.delta.ChunkDeltaUpdateS2CPacketAccessor;
@@ -35,11 +35,11 @@ abstract public class ClientConnectionMixin {
     private Map<Long, ChunkBlockUpdateDetails> chunkUpdates = new Long2ObjectRBTreeMap<>();
 
     @Inject(
-            method = "send(Lnet/minecraft/network/packet/Packet;Lio/netty/channel/ChannelFutureListener;Z)V",
+            method = "send(Lnet/minecraft/network/packet/Packet;)V",
             at = @At("HEAD"),
             cancellable = true
     )
-    public void collectBlockUpdate(Packet<?> packet, @Nullable ChannelFutureListener channelFutureListener, boolean flush, CallbackInfo ci) {
+    public void collectBlockUpdate(Packet<?> packet, CallbackInfo ci) {
         if (Annuus.isServer && AnnuusServer.getAnnuusVersion(this) >= 3 && Annuus.CONFIG.isEnableBlockUpdatesCompress()) {
             boolean shouldCancel = false;
 

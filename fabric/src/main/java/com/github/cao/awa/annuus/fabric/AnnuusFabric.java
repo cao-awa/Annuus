@@ -16,7 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class AnnuusFabric implements ModInitializer {
-    public static final Logger LOGGER = LogManager.getLogger("Annuusic");
+    public static final Logger LOGGER = LogManager.getLogger("AnnuusFabric");
 
     @Override
     public void onInitialize() {

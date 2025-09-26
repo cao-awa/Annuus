@@ -15,11 +15,5 @@ public class AnnuusNeoForgedServer {
         Annuus.isServer = true;
 
         AnnuusNeoForged.LOGGER.info("Loading annuus neoforge server");
-
-        PayloadRegistrar payloadRegistrar = new PayloadRegistrar("1");
-
-        payloadRegistrar.playToServer(NoticeServerAnnuusPayload.IDENTIFIER, NoticeServerAnnuusPayload.CODEC, (payload, context) -> {
-            NoticeServerAnnuusPayloadHandler.updateAnnuusVersionDuringPlay(payload, (ServerPlayerEntity) context.player());
-        });
     }
 }

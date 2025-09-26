@@ -4,6 +4,8 @@
   "package": "com.github.cao.awa.annuus.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "network.connection.ClientConnectionMixin",
+    "player.manager.PlayerManagerMixin",
     "registry.RegistryKeyAccessor",
     "server.MinecraftServerMixin",
     "server.network.configuration.ServerConfigurationNetworkHandlerMixin",
