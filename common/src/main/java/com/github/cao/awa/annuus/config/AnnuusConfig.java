@@ -13,6 +13,7 @@ import com.github.cao.awa.sinuatum.manipulate.Manipulate;
 import com.github.cao.awa.sinuatum.util.collection.CollectionFactor;
 import com.github.cao.awa.sinuatum.util.io.IOUtil;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import net.minecraft.util.JsonHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -136,7 +137,7 @@ public class AnnuusConfig {
     }
 
     public <X> void setConfig(AnnuusConfigKey<X> configKey, X value) {
-        this.config.add(configKey.name(), configKey.onChangeCheck(check(configKey, value)));
+        this.config.add(configKey.name(), configKey.check(check(configKey, value)));
     }
 
     public <X> void setConfig(AnnuusConfigKey<X> configKey, JsonObject json) {
@@ -148,7 +149,11 @@ public class AnnuusConfig {
         if (value == null) {
             return configKey.defaultValue();
         }
-        return check(configKey, value);
+        if (value instanceof JsonPrimitive primitive) {
+            return configKey.getValue(primitive);
+        } else {
+            return check(configKey, value);
+        }
     }
 
     @Nullable
@@ -156,10 +161,14 @@ public class AnnuusConfig {
         if (value == null) {
             return null;
         }
-        if (configKey.type().isInstance(value) || configKey.type().isAssignableFrom(value.getClass())) {
+
+        if (value instanceof JsonPrimitive primitive) {
+            return configKey.getValue(primitive);
+        } else if (configKey.type().isInstance(value) || configKey.type().isAssignableFrom(value.getClass())) {
             return Manipulate.cast(value);
         }
-        throw new IllegalArgumentException("Config '" + configKey.name() + "' required '" + configKey.type() + "' but got '" + value.getClass() + "'");
+
+        throw new IllegalArgumentException("Config key '" + configKey.name() + "' required '" + configKey.type() + "' but got '" + value.getClass() + "'");
     }
 
     public void load() {
