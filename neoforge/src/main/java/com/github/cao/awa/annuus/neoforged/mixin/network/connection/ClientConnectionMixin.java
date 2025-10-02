@@ -1,11 +1,11 @@
 package com.github.cao.awa.annuus.neoforged.mixin.network.connection;
 
 import com.github.cao.awa.annuus.Annuus;
+import com.github.cao.awa.annuus.chunk.update.ChunkBlockUpdateDetails;
 import com.github.cao.awa.annuus.mixin.server.network.packet.chunk.delta.ChunkDeltaUpdateS2CPacketAccessor;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
 import com.github.cao.awa.annuus.server.AnnuusServer;
-import com.github.cao.awa.annuus.update.ChunkBlockUpdateDetails;
 import io.netty.channel.ChannelFutureListener;
 import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
 import net.minecraft.block.Block;
