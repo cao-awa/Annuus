@@ -38,7 +38,6 @@ public class AnnuusFabricClient implements ClientModInitializer {
         });
 
         ClientPlayNetworking.registerGlobalReceiver(ShortRecipeSyncPayload.IDENTIFIER, (packet, context) -> {
-            System.out.println("???");
             ShortRecipeSyncPayloadHandler.syncRecipesFromPayload(packet, context.client(), context.player());
         });
 

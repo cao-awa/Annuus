@@ -1,4 +1,4 @@
-package com.github.cao.awa.annuus.update;
+package com.github.cao.awa.annuus.chunk.update;
 
 public record ChunkBlockUpdateDetails(
         short[] positions,

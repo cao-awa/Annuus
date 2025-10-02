@@ -54,7 +54,7 @@ public class ChunkDataSenderMixin {
             // Send chunks using the collected packet.
             if (!list.isEmpty()) {
                 // Start sending.
-                ServerWorld world = this.player.getWorld();
+                ServerWorld world = this.player.getEntityWorld();
                 ServerPlayNetworkHandler networkHandler = this.player.networkHandler;
                 this.unacknowledgedBatches++;
 

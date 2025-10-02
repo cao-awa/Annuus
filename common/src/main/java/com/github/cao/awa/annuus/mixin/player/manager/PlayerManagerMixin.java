@@ -17,6 +17,8 @@ import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,6 +28,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
+    private static final Logger LOGGER = LoggerFactory.getLogger("AnnuusPlayerManager");
+
     @Shadow
     @Final
     private MinecraftServer server;
@@ -72,6 +76,18 @@ public class PlayerManagerMixin {
     )
     public void requireClientAnnuusVersion(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         connection.send(NoticeUpdateServerAnnuusPayload.createPacket());
+    }
+
+    @Inject(
+            method = "onPlayerConnect",
+            at = @At("HEAD")
+    )
+    public void onReady(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
+        int annuusVersion = AnnuusServer.getAnnuusVersion(connection);
+
+        if (annuusVersion > -1) {
+            LOGGER.info("Player {} joining server with Annuus protocol version {}", player.getName().getString(), annuusVersion);
+        }
     }
 }
 

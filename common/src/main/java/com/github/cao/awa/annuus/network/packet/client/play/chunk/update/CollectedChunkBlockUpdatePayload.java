@@ -1,9 +1,9 @@
 package com.github.cao.awa.annuus.network.packet.client.play.chunk.update;
 
+import com.github.cao.awa.annuus.chunk.update.ChunkBlockUpdateDetails;
 import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
-import com.github.cao.awa.annuus.update.ChunkBlockUpdateDetails;
 import com.github.cao.awa.annuus.util.compress.AnnuusCompressUtil;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;

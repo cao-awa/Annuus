@@ -8,7 +8,6 @@
     "player.manager.PlayerManagerMixin",
     "registry.RegistryKeyAccessor",
     "server.MinecraftServerMixin",
-    "server.network.configuration.ServerConfigurationNetworkHandlerMixin",
     "server.network.handler.ServerCommonNetworkHandlerAccessor",
     "server.network.packet.chunk.delta.ChunkDeltaUpdateS2CPacketAccessor",
     "server.network.packet.chunk.sender.ChunkDataSenderMixin"
