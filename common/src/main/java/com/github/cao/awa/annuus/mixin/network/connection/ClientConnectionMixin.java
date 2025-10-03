@@ -6,7 +6,6 @@ import com.github.cao.awa.annuus.mixin.server.network.packet.chunk.delta.ChunkDe
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
 import com.github.cao.awa.annuus.server.AnnuusServer;
-import io.netty.channel.ChannelFutureListener;
 import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -14,7 +13,6 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,7 +25,7 @@ import java.util.Map;
 
 @Mixin(ClientConnection.class)
 abstract public class ClientConnectionMixin {
-    @Shadow protected abstract void sendImmediately(Packet<?> packet, @Nullable ChannelFutureListener channelFutureListener, boolean flush);
+    @Shadow public abstract void send(Packet<?> packet);
 
     @Unique
     private Map<Long, BlockState> blockUpdates = new Long2ObjectRBTreeMap<>();
@@ -77,13 +75,13 @@ abstract public class ClientConnectionMixin {
     )
     public void sendCollectedBlockUpdates(CallbackInfo ci) {
         if (!this.blockUpdates.isEmpty()) {
-            sendImmediately(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.blockUpdates)), null, true);
+            send(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.blockUpdates)));
 
             this.blockUpdates.clear();
         }
 
         if (!this.chunkUpdates.isEmpty()) {
-            sendImmediately(CollectedChunkBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.chunkUpdates)), null, true);
+            send(CollectedChunkBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.chunkUpdates)));
 
             this.chunkUpdates.clear();
         }
