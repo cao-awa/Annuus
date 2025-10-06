@@ -2,9 +2,11 @@ package com.github.cao.awa.annuus.config;
 
 import com.github.cao.awa.annuus.config.key.AnnuusConfigKey;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
+import com.github.cao.awa.annuus.information.compressor.bzip2.Bzip2Compressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.annuus.information.compressor.inaction.InactionCompressor;
 import com.github.cao.awa.annuus.information.compressor.lz4.Lz4Compressor;
+import com.github.cao.awa.annuus.information.compressor.lzma.LZMACompressor;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
@@ -44,7 +46,9 @@ public class AnnuusConfig {
             "deflate_7",
             "deflate_8",
             "deflate_9",
-            "lz4"
+            "lz4",
+            "bzip2",
+            "lzma"
     );
     private static final Function<String, InformationCompressor> COMPRESSOR_FETCHER = (compressOption) -> {
         if (compressOption == null) {
@@ -66,6 +70,10 @@ public class AnnuusConfig {
             };
         } else if (compressOption.equals("lz4")) {
             return Lz4Compressor.INSTANCE;
+        } else if (compressOption.equals("bzip2")) {
+            return Bzip2Compressor.INSTANCE;
+        } else if (compressOption.equals("lzma")) {
+            return LZMACompressor.INSTANCE;
         } else if (compressOption.equals("no_compress") || compressOption.equals("inaction")) {
             return InactionCompressor.INSTANCE;
         }
