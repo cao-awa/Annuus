@@ -1,6 +1,5 @@
 package com.github.cao.awa.annuus.network.packet.client.play.chunk.data;
 
-import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.annuus.util.compress.AnnuusCompressUtil;
@@ -40,6 +39,10 @@ public record CollectedChunkDataPayload(
 
     public static void setCurrentCompressor(InformationCompressor compressor) {
         currentCompressor = compressor;
+    }
+
+    public static InformationCompressor getCurrentCompressor() {
+        return currentCompressor;
     }
 
     public static CustomPayloadS2CPacket createPacket(WorldChunk[] chunks, LightingProvider lightProvider) {
@@ -130,12 +133,7 @@ public record CollectedChunkDataPayload(
             lightData.write(delegate);
         }
 
-        AnnuusCompressUtil.doCompress(buf, delegate, () -> currentCompressor);
-
-        if (AnnuusDebugger.enableDebugs) {
-            AnnuusDebugger.processedChunks += size;
-            AnnuusDebugger.processedChunksBytes += buf.readableBytes();
-        }
+        AnnuusCompressUtil.compress(buf, delegate, () -> currentCompressor);
     }
 
     @Override

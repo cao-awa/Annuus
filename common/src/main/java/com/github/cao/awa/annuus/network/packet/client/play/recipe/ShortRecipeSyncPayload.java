@@ -1,6 +1,5 @@
 package com.github.cao.awa.annuus.network.packet.client.play.recipe;
 
-import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.annuus.recipe.AnnuusRecipeEntries;
@@ -37,6 +36,10 @@ public record ShortRecipeSyncPayload(
 
     public static void setCurrentCompressor(InformationCompressor compressor) {
         currentCompressor = compressor;
+    }
+
+    public static InformationCompressor getCurrentCompressor() {
+        return currentCompressor;
     }
 
     public static CustomPayloadS2CPacket createPacket(
@@ -86,26 +89,7 @@ public record ShortRecipeSyncPayload(
                 packet.recipes
         );
 
-        if (AnnuusDebugger.enableDebugs) {
-            LOGGER.info("[Debug] Delegate size: {} by {}", delegate.readableBytes(), currentCompressor);
-        }
-        AnnuusCompressUtil.doCompress(buf, delegate, () -> currentCompressor);
-
-        if (AnnuusDebugger.enableDebugs) {
-            LOGGER.info("[Debug] Short recipes size: {} bytes", buf.readableBytes());
-        }
-    }
-
-    @TestOnly
-    public static void testEncode(SynchronizeRecipesS2CPacket source, DynamicRegistryManager registryManager, ShortRecipeSyncPayload payload) {
-        if (AnnuusDebugger.enableDebugs) {
-            RegistryByteBuf buf = new RegistryByteBuf(new PacketByteBuf(Unpooled.buffer()), registryManager);
-            SynchronizeRecipesS2CPacket.CODEC.encode(buf, source);
-            LOGGER.info("[Debug] Source recipes size: {} bytes", buf.readableBytes());
-
-            RegistryByteBuf testBuf = new RegistryByteBuf(new PacketByteBuf(Unpooled.buffer()), registryManager);
-            CODEC.encode(testBuf, payload);
-        }
+        AnnuusCompressUtil.compress(buf, delegate, () -> currentCompressor);
     }
 
     @Override

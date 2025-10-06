@@ -1,6 +1,5 @@
 package com.github.cao.awa.annuus.network.packet.client.play.block.update;
 
-import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.annuus.util.compress.AnnuusCompressUtil;
@@ -87,12 +86,7 @@ public record CollectedBlockUpdatePayload(
             blockStateCodec.encode(delegate, blockState);
         }
 
-        AnnuusCompressUtil.doCompress(buf, delegate, () -> currentCompressor);
-
-        if (AnnuusDebugger.enableDebugs) {
-            AnnuusDebugger.processedChunks += size;
-            AnnuusDebugger.processedChunksBytes += buf.readableBytes();
-        }
+        AnnuusCompressUtil.compress(buf, delegate, () -> currentCompressor);
     }
 
     @Override

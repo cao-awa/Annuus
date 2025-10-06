@@ -1,7 +1,6 @@
 package com.github.cao.awa.annuus.network.packet.client.play.chunk.update;
 
 import com.github.cao.awa.annuus.chunk.update.ChunkBlockUpdateDetails;
-import com.github.cao.awa.annuus.debug.AnnuusDebugger;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
 import com.github.cao.awa.annuus.util.compress.AnnuusCompressUtil;
@@ -34,6 +33,10 @@ public record CollectedChunkBlockUpdatePayload(
 
     public static void setCurrentCompressor(InformationCompressor compressor) {
         currentCompressor = compressor;
+    }
+
+    public static InformationCompressor getCurrentCompressor() {
+        return currentCompressor;
     }
 
     public static CustomPayloadS2CPacket createPacket(ChunkSectionPos sectionPos, short[] positions, BlockState[] updates) {
@@ -140,10 +143,6 @@ public record CollectedChunkBlockUpdatePayload(
 
         for (ChunkBlockUpdateDetails updateDetail : updateDetails) {
             delegate.writeVarInt(updateDetail.positions().length);
-
-            if (AnnuusDebugger.enableDebugs) {
-                AnnuusDebugger.processedBlockUpdates += updateDetail.positions().length;
-            }
         }
 
         for (ChunkBlockUpdateDetails updateDetail : updateDetails) {
@@ -158,11 +157,7 @@ public record CollectedChunkBlockUpdatePayload(
             }
         }
 
-        AnnuusCompressUtil.doCompress(buf, delegate, () -> currentCompressor);
-
-        if (AnnuusDebugger.enableDebugs) {
-            AnnuusDebugger.processedBlockUpdateBytes += buf.readableBytes();
-        }
+        AnnuusCompressUtil.compress(buf, delegate, () -> currentCompressor);
     }
 
     @Override

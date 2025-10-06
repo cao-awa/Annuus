@@ -2,7 +2,6 @@ package com.github.cao.awa.annuus.fabric;
 
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.command.AnnuusConfigCommand;
-import com.github.cao.awa.annuus.command.AnnuusDebugCommand;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
@@ -35,7 +34,6 @@ public class AnnuusFabric implements ModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             AnnuusFabric.LOGGER.info("Registering commands");
-            AnnuusDebugCommand.register(server);
             AnnuusConfigCommand.register(server);
         });
     }

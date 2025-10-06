@@ -1,7 +1,8 @@
 package com.github.cao.awa.annuus.mixin.server.network.packet.chunk.sender;
 
 import com.github.cao.awa.annuus.Annuus;
-import com.github.cao.awa.annuus.debug.AnnuusDebugger;
+import com.github.cao.awa.annuus.information.compressor.bzip2.Bzip2Compressor;
+import com.github.cao.awa.annuus.information.compressor.lzma.LZMACompressor;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
 import com.github.cao.awa.annuus.server.AnnuusServer;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -51,6 +52,14 @@ public class ChunkDataSenderMixin {
     public boolean sendChunkBatches(List<WorldChunk> list, Operation<Boolean> original) {
         // Only collect data when player installed annuus.
         if (Annuus.isServer && AnnuusServer.getAnnuusVersion(this.player) >= 3 && Annuus.CONFIG.isEnableChunkCompress()) {
+            // TODO Generic version check system
+            if (CollectedChunkDataPayload.getCurrentCompressor() instanceof Bzip2Compressor || CollectedChunkDataPayload.getCurrentCompressor() instanceof LZMACompressor) {
+                // Older Annuus cannot use Bzip2 and LZMA compress, send by vanilla.
+                if (AnnuusServer.getAnnuusVersion(this.player) < 5) {
+                    original.call(list);
+                    return true;
+                }
+            }
             // Send chunks using the collected packet.
             if (!list.isEmpty()) {
                 // Start sending.
@@ -74,26 +83,5 @@ public class ChunkDataSenderMixin {
         }
         // If the player doesn't install annuus, let vanilla send packets instead of annuus.
         return original.call(list);
-    }
-
-    @Inject(
-            method = "sendChunkData",
-            at = @At("HEAD")
-    )
-    private static void startSendOneChunk(ServerPlayNetworkHandler handler, ServerWorld world, WorldChunk chunk, CallbackInfo ci) {
-        if (AnnuusDebugger.enableDebugs) {
-            start = System.nanoTime();
-            AnnuusDebugger.processedChunks++;
-        }
-    }
-
-    @Inject(
-            method = "sendChunkData",
-            at = @At("RETURN")
-    )
-    private static void doneSendOneChunk(ServerPlayNetworkHandler handler, ServerWorld world, WorldChunk chunk, CallbackInfo ci) {
-        if (AnnuusDebugger.enableDebugs) {
-            AnnuusDebugger.chunkCalculatedTimes += (System.nanoTime() - start) / 1000000D;
-        }
     }
 }

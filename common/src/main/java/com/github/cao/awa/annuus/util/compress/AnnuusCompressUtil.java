@@ -9,7 +9,7 @@ import net.minecraft.network.RegistryByteBuf;
 import java.util.function.Supplier;
 
 public class AnnuusCompressUtil {
-    public static void doCompress(PacketByteBuf buf, PacketByteBuf delegate, Supplier<InformationCompressor> compressorSupplier) {
+    public static void compress(PacketByteBuf buf, PacketByteBuf delegate, Supplier<InformationCompressor> compressorSupplier) {
         byte[] bytes = new byte[delegate.readableBytes()];
 
         delegate.readBytes(bytes);

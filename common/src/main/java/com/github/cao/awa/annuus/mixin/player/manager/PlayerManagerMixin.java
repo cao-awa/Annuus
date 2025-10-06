@@ -1,7 +1,12 @@
 package com.github.cao.awa.annuus.mixin.player.manager;
 
 import com.github.cao.awa.annuus.Annuus;
-import com.github.cao.awa.annuus.debug.AnnuusDebugger;
+import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
+import com.github.cao.awa.annuus.information.compressor.bzip2.Bzip2Compressor;
+import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
+import com.github.cao.awa.annuus.information.compressor.lzma.LZMACompressor;
+import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
+import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
 import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayload;
 import com.github.cao.awa.annuus.network.packet.client.update.NoticeUpdateServerAnnuusPayload;
 import com.github.cao.awa.annuus.server.AnnuusServer;
@@ -53,13 +58,21 @@ public class PlayerManagerMixin {
                     recipeManager.getStonecutterRecipeForSync()
             );
 
+            InformationCompressor informationCompressor = CollectedChunkBlockUpdatePayload.getCurrentCompressor();
+
+            // TODO Generic version check system
+            if (CollectedChunkDataPayload.getCurrentCompressor() instanceof Bzip2Compressor || CollectedChunkDataPayload.getCurrentCompressor() instanceof LZMACompressor) {
+                // Older Annuus cannot use Bzip2 and LZMA compress, send by vanilla.
+                if (AnnuusServer.getAnnuusVersion(this) < 5) {
+                    ShortRecipeSyncPayload.setCurrentCompressor(DeflateCompressor.BEST_INSTANCE);
+                }
+            }
+
             CustomPayloadS2CPacket shortRecipeSyncPayloadPacket = ShortRecipeSyncPayload.createPacket(payload);
 
             instance.sendPacket(shortRecipeSyncPayloadPacket);
 
-            if (AnnuusDebugger.enableDebugs) {
-                ShortRecipeSyncPayload.testEncode(source, this.server.getRegistryManager(), payload);
-            }
+            ShortRecipeSyncPayload.setCurrentCompressor(informationCompressor);
         } else {
             original.call(instance, packet);
         }

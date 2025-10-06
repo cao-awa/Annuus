@@ -2,8 +2,13 @@ package com.github.cao.awa.annuus.mixin.network.connection;
 
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.chunk.update.ChunkBlockUpdateDetails;
+import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
+import com.github.cao.awa.annuus.information.compressor.bzip2.Bzip2Compressor;
+import com.github.cao.awa.annuus.information.compressor.deflate.DeflateCompressor;
+import com.github.cao.awa.annuus.information.compressor.lzma.LZMACompressor;
 import com.github.cao.awa.annuus.mixin.server.network.packet.chunk.delta.ChunkDeltaUpdateS2CPacketAccessor;
 import com.github.cao.awa.annuus.network.packet.client.play.block.update.CollectedBlockUpdatePayload;
+import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
 import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
 import com.github.cao.awa.annuus.server.AnnuusServer;
 import it.unimi.dsi.fastutil.longs.Long2ObjectRBTreeMap;
@@ -74,6 +79,16 @@ abstract public class ClientConnectionMixin {
             at = @At("HEAD")
     )
     public void sendCollectedBlockUpdates(CallbackInfo ci) {
+        InformationCompressor informationCompressor = CollectedChunkBlockUpdatePayload.getCurrentCompressor();
+
+        // TODO Generic version check system
+        if (CollectedChunkDataPayload.getCurrentCompressor() instanceof Bzip2Compressor || CollectedChunkDataPayload.getCurrentCompressor() instanceof LZMACompressor) {
+            // Older Annuus cannot use Bzip2 and LZMA compress, send by vanilla.
+            if (AnnuusServer.getAnnuusVersion(this) < 5) {
+                CollectedChunkBlockUpdatePayload.setCurrentCompressor(DeflateCompressor.BEST_INSTANCE);
+            }
+        }
+
         if (!this.blockUpdates.isEmpty()) {
             send(CollectedBlockUpdatePayload.createPacket(new Long2ObjectRBTreeMap<>(this.blockUpdates)));
 
@@ -85,5 +100,7 @@ abstract public class ClientConnectionMixin {
 
             this.chunkUpdates.clear();
         }
+
+        CollectedChunkBlockUpdatePayload.setCurrentCompressor(informationCompressor);
     }
 }

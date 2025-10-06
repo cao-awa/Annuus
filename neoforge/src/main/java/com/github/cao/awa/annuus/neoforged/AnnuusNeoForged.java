@@ -2,21 +2,9 @@ package com.github.cao.awa.annuus.neoforged;
 
 import com.github.cao.awa.annuus.Annuus;
 import com.github.cao.awa.annuus.command.AnnuusConfigCommand;
-import com.github.cao.awa.annuus.command.AnnuusDebugCommand;
-import com.github.cao.awa.annuus.network.packet.client.play.block.update.*;
-import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayload;
-import com.github.cao.awa.annuus.network.packet.client.play.chunk.data.CollectedChunkDataPayloadHandler;
-import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayload;
-import com.github.cao.awa.annuus.network.packet.client.play.chunk.update.CollectedChunkBlockUpdatePayloadHandler;
-import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayload;
-import com.github.cao.awa.annuus.network.packet.client.play.recipe.ShortRecipeSyncPayloadHandler;
-import com.github.cao.awa.annuus.network.packet.client.update.NoticeUpdateServerAnnuusPayload;
-import com.github.cao.awa.annuus.network.packet.client.update.NoticeUpdateServerAnnuusPayloadHandler;
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayload;
 import com.github.cao.awa.annuus.network.packet.server.notice.NoticeServerAnnuusPayloadHandler;
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.neoforged.bus.api.IEventBus;
@@ -55,7 +43,6 @@ public class AnnuusNeoForged {
         CommandDispatcher<ServerCommandSource> dispatcher = event.getDispatcher();
 
         AnnuusNeoForged.LOGGER.info("Registering annuus commands");
-        AnnuusDebugCommand.register(dispatcher);
         AnnuusConfigCommand.register(dispatcher);
     }
 }
