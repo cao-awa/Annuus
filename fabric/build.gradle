@@ -36,8 +36,7 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
-    shadowBundle 'com.github.cao.awa:catheter:1.0.46'
-    shadowBundle 'com.github.cao.awa:sinuatum:1.0.16'
+    implementation 'maven.modrinth:daisy:1.0.1'
 }
 
 processResources {

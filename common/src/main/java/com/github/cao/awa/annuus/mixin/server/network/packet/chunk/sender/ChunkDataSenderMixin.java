@@ -62,12 +62,7 @@ public class ChunkDataSenderMixin {
                 WorldChunk[] sendingChunks = list.toArray(WorldChunk[]::new);
                 networkHandler.send(StartChunkSendS2CPacket.INSTANCE, null);
 
-                long start = System.nanoTime();
                 networkHandler.send(CollectedChunkDataPayload.createPacket(sendingChunks, world.getLightingProvider()), null);
-                if (AnnuusDebugger.enableDebugs) {
-                    AnnuusDebugger.chunkCalculatedTimes += (System.nanoTime() - start) / 1000000D;
-                    AnnuusDebugger.processedChunks += sendingChunks.length;
-                }
                 networkHandler.send(new ChunkSentS2CPacket(list.size()), null);
 
                 // Done sending.

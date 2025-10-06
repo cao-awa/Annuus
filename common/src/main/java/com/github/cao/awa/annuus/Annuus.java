@@ -10,22 +10,15 @@ import java.util.Set;
 public class Annuus {
     public static final Logger LOGGER = LogManager.getLogger("Annuus");
     public static final String VERSION = "1.0.15";
-    public static final int PROTOCOL_VERSION_ID = 4;
+    public static final int PROTOCOL_VERSION_ID = 5;
     public static final AnnuusConfig CONFIG = new AnnuusConfig();
     public static final AnnuusConfig PERSISTENT_CONFIG = new AnnuusConfig();
     public static Set<String> LOADED_MODS = CollectionFactor.hashSet();
     public static String loadingPlatform = "fabric";
     public static boolean isServer = true;
-    public static long processedChunks = 0;
-    public static long processedBytes = 0;
-    public static long processedBlockUpdates = 0;
-    public static long vanillaBlockUpdateBytes = 0;
-    public static long processedBlockUpdateBytes = 0;
-    public static double calculatedTimes = 0D;
-    public static boolean enableDebugs = false;
 
     public static void onInitialize() {
-        LOGGER.info("Annuus '{}' loading on platform '{}'", VERSION, loadingPlatform);
+        LOGGER.info("Annuus version '{}' loading on platform '{}'", VERSION, loadingPlatform);
         CONFIG.load();
         PERSISTENT_CONFIG.copyFrom(CONFIG);
         writeConfig();
