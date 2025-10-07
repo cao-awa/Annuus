@@ -13,7 +13,6 @@
     "server.network.packet.chunk.sender.ChunkDataSenderMixin"
   ],
   "client": [
-    "client.network.ClientConfigurationNetworkHandlerMixin"
   ],
   "server": [
   ],
