@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.zip.InflaterInputStream;
 
 @Stable
 public class Bzip2Compressor implements InformationCompressor {
@@ -27,51 +28,23 @@ public class Bzip2Compressor implements InformationCompressor {
      * Compress using Bzip2.
      *
      * @param bytes data source
-     *
      * @return compress result
-     *
      * @author cao_awa
-     *
      * @since 1.0.0
      */
     public byte[] compress(byte[] bytes) {
-        if (bytes.length == 0) {
-            return EMPTY_BYTES;
-        }
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            IOUtil.write(
-                    new BZip2CompressorOutputStream(out),
-                    bytes
-            );
-            return out.toByteArray();
-        } catch (Exception e) {
-            return bytes;
-        }
+        return compress(bytes, BZip2CompressorOutputStream::new);
     }
 
     /**
      * Decompress using Bzip2.
      *
      * @param bytes data source
-     *
      * @return decompress result
-     *
      * @author cao_awa
-     *
      * @since 1.0.0
      */
     public byte[] decompress(byte[] bytes) {
-        if (bytes.length == 0) {
-            return EMPTY_BYTES;
-        }
-        try (ByteArrayOutputStream result = new ByteArrayOutputStream()) {
-            IOUtil.write(
-                    result,
-                    new BZip2CompressorInputStream(new ByteArrayInputStream(bytes))
-            );
-            return result.toByteArray();
-        } catch (Exception ex) {
-            return bytes;
-        }
+        return decompress(bytes, BZip2CompressorInputStream::new);
     }
 }

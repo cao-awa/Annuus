@@ -4,6 +4,7 @@ import com.github.cao.awa.annuus.information.compressor.InformationCompressor;
 import com.github.cao.awa.annuus.information.compressor.InformationCompressors;
 import com.github.cao.awa.apricot.annotations.Stable;
 import com.github.cao.awa.sinuatum.util.io.IOUtil;
+import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,55 +38,23 @@ public class DeflateCompressor implements InformationCompressor {
      * Compress using 'deflate' with the best compression.
      *
      * @param bytes data source
-     *
      * @return compress result
-     *
      * @author cao_awa
-     *
      * @since 1.0.0
      */
     public byte[] compress(byte[] bytes) {
-        if (bytes.length == 0) {
-            return EMPTY_BYTES;
-        }
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            IOUtil.write(
-                    new DeflaterOutputStream(
-                            out,
-                            new Deflater(this.compressLevel)
-                    ),
-                    bytes
-            );
-            return out.toByteArray();
-        } catch (Exception e) {
-            return bytes;
-        }
+        return compress(bytes, DeflaterOutputStream::new);
     }
 
     /**
      * Decompress using 'inflate'.
      *
      * @param bytes data source
-     *
      * @return decompress result
-     *
      * @author cao_awa
-     *
      * @since 1.0.0
      */
     public byte[] decompress(byte[] bytes) {
-        if (bytes.length == 0) {
-            return EMPTY_BYTES;
-        }
-        try (ByteArrayOutputStream result = new ByteArrayOutputStream()) {
-            InflaterInputStream inflater = new InflaterInputStream(new ByteArrayInputStream(bytes));
-            IOUtil.write(
-                    result,
-                    inflater
-            );
-            return result.toByteArray();
-        } catch (Exception ex) {
-            return bytes;
-        }
+        return decompress(bytes, InflaterInputStream::new);
     }
 }

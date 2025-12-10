@@ -23,51 +23,23 @@ public class LZMACompressor implements InformationCompressor {
      * Compress using LZMA.
      *
      * @param bytes data source
-     *
      * @return compress result
-     *
      * @author cao_awa
-     *
      * @since 1.0.0
      */
     public byte[] compress(byte[] bytes) {
-        if (bytes.length == 0) {
-            return EMPTY_BYTES;
-        }
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            IOUtil.write(
-                    new LZMACompressorOutputStream(out),
-                    bytes
-            );
-            return out.toByteArray();
-        } catch (Exception e) {
-            return bytes;
-        }
+        return compress(bytes, LZMACompressorOutputStream::new);
     }
 
     /**
      * Decompress using LZMA.
      *
      * @param bytes data source
-     *
      * @return decompress result
-     *
      * @author cao_awa
-     *
      * @since 1.0.0
      */
     public byte[] decompress(byte[] bytes) {
-        if (bytes.length == 0) {
-            return EMPTY_BYTES;
-        }
-        try (ByteArrayOutputStream result = new ByteArrayOutputStream()) {
-            IOUtil.write(
-                    result,
-                    new LZMACompressorInputStream(new ByteArrayInputStream(bytes))
-            );
-            return result.toByteArray();
-        } catch (Exception ex) {
-            return bytes;
-        }
+        return decompress(bytes, LZMACompressorInputStream::new);
     }
 }

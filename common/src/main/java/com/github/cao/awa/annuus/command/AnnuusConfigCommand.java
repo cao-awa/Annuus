@@ -11,6 +11,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.command.DefaultPermissions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -43,7 +44,7 @@ public class AnnuusConfigCommand {
                             }
                             return 0;
                         })
-                        .requires(context -> context.hasPermissionLevel(4))
+                        .requires(context -> context.getPermissions().hasPermission(DefaultPermissions.GAMEMASTERS))
                         .then(createStringConfigNode(AnnuusConfig.CHUNK_COMPRESS))
                         .then(createStringConfigNode(AnnuusConfig.BLOCK_UPDATES_COMPRESS))
                         .then(createBoolConfigNode(AnnuusConfig.SHORT_RECIPES))
